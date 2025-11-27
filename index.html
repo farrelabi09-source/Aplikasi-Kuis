@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Kuis Interaktif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Menambahkan font Montserrat (Bold 700) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    
+    <!-- Script untuk merender rumus Matematika (MathJax) -->
+    <!-- DIHAPUS: polyfill.min.js menyebabkan error 'ERR_NAME_NOT_RESOLVED' dan tidak wajib untuk MathJax 3 -->
+    <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Konfigurasi MathJax agar mengenali \(...\) -->
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['\\(', '\\)']]
+          }
+        };
+    </script>
+    
+    <style>
+        /* Menggunakan font Inter sebagai default */
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            transition: background-color 300ms; /* Transisi untuk Dark Mode */
+        }
+        
+        /* Canvas untuk latar belakang dinamis */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            /* Warna latar default (Terang) */
+            background-color: #f1f5f9; 
+            transition: background-color 300ms;
+        }
+
+        /* Kontainer utama untuk di tengah layar */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 42rem; /* Ukuran default (mobile) */
+            margin-top: 4rem;
+            margin-bottom: 4rem;
+            /* Warna kontainer default (Terang) */
+            background-color: #ffffff;
+            transition: background-color 300ms;
+        }
+
+        /* PERUBAHAN: Perbesar kontainer di Desktop (lg) untuk 2 kolom */
+        @media (min-width: 1024px) {
+            .main-container {
+                max-width: 64rem; /* max-w-6xl */
+            }
+        }
+
+        @media (min-width: 768px) {
+            body {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+            }
+            .main-container {
+                 margin-top: 0;
+                 margin-bottom: 0;
+            }
+        }
+        
+        /* --- EFEK FADE --- */
+        #menu-container, #quiz-container, #score-container, .modal-backdrop, .modal-container, #question-area {
+            transition: opacity 300ms ease-in-out;
+        }
+        /* State saat disembunyikan (untuk transisi) */
+        .modal-backdrop.hidden, .modal-container.hidden {
+             pointer-events: none;
+        }
+        
+
+        /* --- STYLING DARK MODE FIXES (Perbaikan Tambahan) --- */
+        body.dark {
+            color: #f3f4f6; /* Default text color in dark mode */
+        }
+        body.dark #bg-canvas {
+            background-color: #111827; /* gray-900 */
+        }
+        body.dark .main-container, body.dark .modal-container {
+            background-color: #1f2937; /* gray-800 */
+        }
+        /* Memperbaiki warna teks umum, termasuk h4 di menu dan modal */
+        body.dark h1, body.dark h2, body.dark h3, body.dark h4, body.dark p, body.dark strong, body.dark #question-text, body.dark #modal-nav-title {
+            color: #f3f4f6; /* white-ish */
+        }
+        body.dark .text-slate-700 {
+            color: #d1d5db; /* light gray for secondary text */
+        }
+        /* FIX: Tombol Kembali ke Menu di Kuis */
+        body.dark #back-to-menu-quiz-btn { 
+             color: #93c5fd; /* blue-300 agar terlihat */
+        }
+        body.dark #loading-spinner p, body.dark #question-counter {
+            color: #9ca3af; /* gray-400 */
+            background-color: #374151; /* gray-700 */
+        }
+        body.dark .option-btn {
+            background-color: #374151; /* gray-700 */
+            border-color: #4b5563; /* gray-600 */
+            color: #f3f4f6;
+        }
+        body.dark .option-btn:hover {
+            background-color: #4b5563; /* gray-600 */
+        }
+        body.dark .q-nav-unanswered {
+            background-color: #374151;
+            color: #f3f4f6;
+        }
+        body.dark .q-nav-unanswered:hover {
+            background-color: #4b5563;
+        }
+        /* Style kotak wacana di Dark Mode */
+        body.dark #passage-container {
+            background-color: #374151;
+            border-color: #4b5563;
+        }
+        body.dark #passage-container * {
+             color: #f3f4f6 !important; /* Memastikan semua teks di wacana putih */
+        }
+        /* Style kotak Penjelasan di Dark Mode (Kontras Tinggi) */
+        body.dark .explanation-correct {
+            background-color: #064e3b; /* deep green background */
+            border-color: #34d399;     /* bright green border */
+            color: #d1fae5;            /* light green text */
+        }
+        body.dark .explanation-wrong {
+            background-color: #7f1d1d; /* deep red background */
+            border-color: #f87171;     /* bright red border */
+            color: #fee2e2;            /* light red text */
+        }
+        /* FIX KRITIS: Tombol Navigasi Kuis (Sebelumnya/Berikutnya) di Dark Mode */
+        body.dark #prev-btn {
+            background-color: #374151; /* abu-abu gelap */
+            color: #f3f4f6;
+            border-color: #4b5563;
+        }
+        body.dark #prev-btn:hover {
+            background-color: #4b5563;
+        }
+        body.dark #next-btn {
+             /* Warna BIRU tetap untuk tombol Next/Lihat Skor */
+             background-color: #2563eb !important; 
+             color: white !important;
+        }
+        /* Nonaktifkan tombol next/prev di dark mode */
+        body.dark #prev-btn:disabled, body.dark #next-btn:disabled {
+            background-color: #374151;
+            opacity: 0.5;
+        }
+        
+        /* PERUBAHAN: Menambahkan style untuk tombol skor di dark mode */
+        body.dark #back-to-menu-score-btn {
+            background-color: #16a34a; /* green-600 */
+            color: white;
+        }
+        body.dark #back-to-menu-score-btn:hover {
+            background-color: #15803d; /* green-700 */
+        }
+
+        /* Tombol Musik TEMA di Menu Utama */
+        .music-toggle-btn {
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 300ms ease;
+        }
+        .music-toggle-btn.is-muted {
+            background-color: #fee2e2; /* red-100 */
+            color: #b91c1c; /* red-800 */
+        }
+        .music-toggle-btn.is-unmuted {
+            background-color: #dcfce7; /* green-100 */
+            color: #166534; /* green-800 */
+        }
+        
+        /* Floating Controls (BARU) */
+        #floating-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* Style untuk Tombol Floating (Icon Only) */
+        .floating-icon-btn {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 9999px; /* rounded-full */
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 300ms ease;
+            cursor: pointer;
+            /* PERUBAHAN: Tambahkan ini untuk menampung ikon absolute */
+            position: relative;
+            width: 42px; /* Set ukuran tetap */
+            height: 42px;
+        }
+        body.dark .floating-icon-btn {
+            background-color: #374151; /* dark mode background */
+            border-color: #4b5563;
+            color: #f3f4f6;
+        }
+        
+        /* --- PERUBAHAN ANIMASI IKON --- */
+
+        /* Aturan umum untuk ikon di dalam tombol floating (POSISI + TRANSISI) */
+        .floating-icon-btn > svg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Transisi ditambahkan ke SEMUA ikon floating */
+            transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+        }
+
+        /* Style ikon Tema (BARU DENGAN ANIMASI + WARNA) */
+        #theme-toggle-btn-floating {
+             color: #f59e0b; /* Kuning (Matahari) */
+        }
+        #theme-sun-icon {
+            opacity: 1;
+            transform: translate(-50%, -50%) rotate(0deg) scale(1);
+        }
+        #theme-moon-icon {
+            opacity: 0;
+            transform: translate(-50%, -50%) rotate(-90deg) scale(0.5);
+        }
+        /* Saat Dark Mode Aktif */
+        body.dark #theme-toggle-btn-floating {
+             color: #60a5fa; /* Biru (Bulan) */
+        }
+        body.dark #theme-sun-icon {
+            opacity: 0;
+            transform: translate(-50%, -50%) rotate(90deg) scale(0.5);
+        }
+        body.dark #theme-moon-icon {
+            opacity: 1;
+            transform: translate(-50%, -50%) rotate(0deg) scale(1);
+        }
+
+        /* Style ikon Musik (Volume) (TETAP DENGAN ANIMASI) */
+        /* #music-toggle-btn-floating > svg { ... } (Dihapus karena sudah digabung di .floating-icon-btn > svg) */
+        
+        #music-icon-unmuted { /* Gelombang */
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+        #music-icon-muted { /* Silang */
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        #music-toggle-btn-floating.is-unmuted #music-icon-unmuted {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        #music-toggle-btn-floating.is-unmuted #music-icon-muted {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+        /* --- AKHIR PERUBAHAN ANIMASI --- */
+
+
+        /* Style kustom untuk tombol pilihan */
+        .option-btn:disabled {
+            /* PERUBAHAN: Tombol tidak lagi di-disable saat kuis */
+            /* opacity: 1; 
+            cursor: not-allowed; */
+        }
+        
+        /* BARU: Style untuk Pilihan yang Dipilih (Mode Kuis Normal) */
+        .selected-answer {
+            background-color: #dbeafe; /* blue-100 */
+            border-color: #2563eb; /* blue-600 */
+            color: #1e3a8a; /* blue-900 */
+            font-weight: 600;
+        }
+        body.dark .selected-answer {
+            background-color: #1e3a8a !important; /* blue-900 */
+            border-color: #60a5fa !important; /* blue-300 */
+            color: #eff6ff !important; /* blue-50 */
+        }
+
+        /* Kelas untuk jawaban benar */
+        .correct-answer {
+            background-color: #dcfce7; /* green-100 */
+            border-color: #22c55e; /* green-500 */
+            color: #166534; /* green-800 */
+            font-weight: 600;
+        }
+        /* FIX KRITIS: Jawaban Benar di Dark Mode */
+        body.dark .correct-answer {
+            background-color: #064e3b !important; /* Hijau Tua */
+            border-color: #34d399 !important;     /* Garis Hijau Muda */
+            color: #d1fae5 !important;            /* Teks Hijau Sangat Muda */
+        }
+        
+        /* Kelas untuk jawaban salah yang dipilih */
+        .wrong-answer {
+            background-color: #fee2e2; /* red-100 */
+            border-color: #ef4444; /* red-500 */
+            color: #991b1b; /* red-800 */
+            font-weight: 600;
+        }
+        /* FIX KRITIS: Jawaban Salah di Dark Mode */
+        body.dark .wrong-answer {
+            background-color: #7f1d1d !important; /* Merah Tua */
+            border-color: #f87171 !important;     /* Garis Merah Muda */
+            color: #fee2e2 !important;            /* Teks Merah Sangat Muda */
+        }
+
+
+        /* Kelas untuk tombol mata pelajaran */
+        .subject-active {
+            background-color: #2563eb; /* blue-600 */
+            color: white;
+            font-weight: 500;
+        }
+        .subject-inactive {
+            background-color: #e5e7eb; /* slate-200 */
+            color: #374151; /* slate-700 */
+            font-weight: 500;
+        }
+        body.dark .subject-inactive {
+             background-color: #374151; /* Darker slate in dark mode */
+             color: #f3f4f6;
+        }
+        body.dark .subject-inactive:hover {
+            background-color: #4b5563;
+        }
+        .subject-inactive:hover {
+            background-color: #d1d5db; /* slate-300 */
+        }
+
+        /* Styling untuk Panel Navigasi Soal (PERUBAHAN FONT) */
+        .q-nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            aspect-ratio: 1 / 1; 
+            height: auto;
+            border-radius: 0.375rem;
+            font-family: 'Montserrat', sans-serif; /* Font Baru */
+            font-size: 1.125rem; /* Diperbesar (text-lg) */
+            font-weight: 700; /* Bold */
+            transition: all 0.2s;
+        }
+        .q-nav-unanswered {
+            background-color: #e2e8f0;
+            color: #334155;
+        }
+        body.dark .q-nav-unanswered {
+            background-color: #374151;
+            color: #f3f4f6;
+        }
+        .q-nav-unanswered:hover {
+            background-color: #cbd5e1;
+        }
+        body.dark .q-nav-unanswered:hover {
+            background-color: #4b5563;
+        }
+        
+        /* BARU: Style untuk navigasi yang sudah dijawab (Mode Kuis) */
+        .q-nav-answered-quiz {
+            background-color: #60a5fa; /* blue-400 */
+            color: white;
+        }
+        .q-nav-answered-quiz:hover {
+            background-color: #3b82f6; /* blue-500 */
+        }
+        body.dark .q-nav-answered-quiz {
+            background-color: #2563eb; /* blue-600 */
+        }
+        body.dark .q-nav-answered-quiz:hover {
+            background-color: #1d4ed8; /* blue-700 */
+        }
+        
+        .q-nav-answered { /* Mode Review: Benar */
+            background-color: #22c55e;
+            color: white;
+        }
+        .q-nav-answered:hover {
+            background-color: #16a34a;
+        }
+        .q-nav-wrong-answered { /* Mode Review: Salah */
+            background-color: #ef4444;
+            color: white;
+        }
+        .q-nav-wrong-answered:hover {
+            background-color: #dc2626;
+        }
+        
+        /* PERUBAHAN: Tombol Aktif (Kuning) */
+        .q-nav-active { 
+            background-color: #f59e0b; /* amber-500 */
+            color: #1f2937; /* gray-800, text-gray-800 */
+            outline: 2px solid #f59e0b; /* amber-500 */
+            outline-offset: 2px;
+        }
+
+        /* Panel Navigasi (Modal dan Desktop) */
+        #quiz-nav-panel, #desktop-nav-panel {
+            display: grid; /* <-- PERBAIKAN: Menambahkan display grid */
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 0.5rem; /* gap-2 */
+            padding: 0.75rem; /* p-3 */
+            background-color: #f9fafb; /* bg-slate-50 */
+            border-radius: 0.5rem; /* rounded-lg */
+            border-width: 1px;
+            max-height: 16rem; /* max-h-64 */
+            overflow-y: auto;
+        }
+
+        /* PERBAIKAN: Latar Belakang Panel Navigasi Soal di Dark Mode */
+        body.dark #quiz-nav-panel, 
+        body.dark #desktop-nav-panel {
+            background-color: #1f2937; /* gray-800 */
+            border-color: #374151; /* gray-700 */
+            /* BARU: Styling Scrollbar Firefox */
+            scrollbar-color: #4b5563 #1f2937; /* thumb(gray-600) track(gray-800) */
+            scrollbar-width: auto; /* PERBAIKAN: Diubah dari 'thin' ke 'auto' */
+        }
+    
+        /* BARU: Styling Scrollbar Webkit (Chrome, Safari) */
+        body.dark #quiz-nav-panel::-webkit-scrollbar,
+        body.dark #desktop-nav-panel::-webkit-scrollbar {
+            width: 16px; /* PERBAIKAN: Diperbesar dari 8px ke 16px */
+        }
+    
+        body.dark #quiz-nav-panel::-webkit-scrollbar-track,
+        body.dark #desktop-nav-panel::-webkit-scrollbar-track {
+            background: #1f2937; /* gray-800 */
+            border-radius: 10px;
+        }
+    
+        body.dark #quiz-nav-panel::-webkit-scrollbar-thumb,
+        body.dark #desktop-nav-panel::-webkit-scrollbar-thumb {
+            background-color: #4b5563; /* gray-600 */
+            border-radius: 10px;
+            border: 4px solid #1f2937; /* PERBAIKAN: Disesuaikan agar pas 16px */
+        }
+    
+        body.dark #quiz-nav-panel::-webkit-scrollbar-thumb:hover,
+        body.dark #desktop-nav-panel::-webkit-scrollbar-thumb:hover {
+            background-color: #6b7280; /* gray-500 */
+        }
+
+        /* Backdrop & Modal (Menggunakan modal-backdrop yang sama) */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5); /* Latar redup */
+            backdrop-filter: blur(8px); /* Efek blur DITINGKATKAN */
+            z-index: 40;
+            /* opacity: 0; <-- DIHAPUS, dikontrol oleh class Tailwind */
+            transition: opacity 300ms ease-in-out;
+            pointer-events: none; /* Nonaktifkan klik saat transisi */
+        }
+        .modal-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50;
+            width: 90%;
+            max-width: 32rem; 
+            /* opacity: 0; <-- DIHAPUS, dikontrol oleh class Tailwind */
+            transition: opacity 300ms ease-in-out;
+            pointer-events: none; /* Nonaktifkan klik saat transisi */
+        }
+        /* Aktifkan klik saat modal terlihat */
+        .modal-backdrop:not(.hidden), .modal-container:not(.hidden) {
+            pointer-events: auto;
+        }
+        
+        .explanation-correct {
+            background-color: #dcfce7;
+            border-color: #bbf7d0; 
+            color: #15803d;
+        }
+        .explanation-wrong {
+            background-color: #fee2e2;
+            border-color: #fecaca;
+            color: #b91c1c;
+        }
+
+        #loading-spinner svg {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Style untuk wacana/passage */
+        #passage-content {
+            white-space: pre-wrap; 
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+
+        /* PERBAIKAN: CSS untuk Responsif Teks Matematika */
+        #question-text, .option-btn, #explanation-text, #passage-content {
+            overflow-x: auto; /* Memungkinkan scroll horizontal JIKA perlu */
+            overflow-wrap: break-word; /* Memaksa kata-kata normal untuk pecah */
+            word-wrap: break-word; /* Fallback */
+            -ms-word-break: break-all;
+            word-break: break-all; /* Paling agresif */
+            word-break: break-word; /* Standar modern */
+        }
+        
+        /* Styling Scrollbar horizontal (jika muncul) */
+        #question-text::-webkit-scrollbar,
+        .option-btn::-webkit-scrollbar,
+        #explanation-text::-webkit-scrollbar,
+        #passage-content::-webkit-scrollbar {
+            height: 6px;
+        }
+        #question-text::-webkit-scrollbar-thumb,
+        .option-btn::-webkit-scrollbar-thumb,
+        #explanation-text::-webkit-scrollbar-thumb,
+        #passage-content::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        body.dark #question-text::-webkit-scrollbar-thumb,
+        body.dark .option-btn::-webkit-scrollbar-thumb,
+        body.dark #explanation-text::-webkit-scrollbar-thumb,
+        body.dark #passage-content::-webkit-scrollbar-thumb {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body class="p-4">
+    
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- ELEMEN AUDIO MP3 -->
+    <audio id="bg-music" src="./assets/musikku.mp3" loop muted></audio>
+
+    <!-- FLOATING CONTROLS (SELALU TERLIHAT) -->
+    <div id="floating-controls">
+        
+        <!-- 1. Auto-Tema (DIHAPUS) -->
+        <!-- <button id="theme-auto-btn" ...> ... </button> -->
+
+        <!-- 2. Pilihan Tema (Toggle) -->
+        <button id="theme-toggle-btn-floating" class="floating-icon-btn">
+            <!-- Icon Sun (Default) -->
+            <svg id="theme-sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            <!-- Icon Moon (PERUBAHAN: class hidden dihapus) -->
+            <svg id="theme-moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+
+        <!-- 2. Musik Latar (PERUBAHAN: Konten diubah) -->
+        <button id="music-toggle-btn-floating" class="floating-icon-btn is-muted">
+            <!-- Ikon Unmuted (Gelombang) BARU -->
+            <svg id="music-icon-unmuted" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+            <!-- Ikon Muted (Silang) BARU -->
+            <svg id="music-icon-muted" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg>
+        </button>
+    </div>
+    <!-- END FLOATING CONTROLS -->
+
+
+    <!-- PERBAIKAN: Padding diubah (p-4 sm:p-6) -->
+    <div class="main-container bg-white p-4 sm:p-6 rounded-xl shadow-2xl">
+
+        <!-- 1. Kontainer Menu (Mulai visible) -->
+        <div id="menu-container" class="opacity-100">
+            <h1 class="text-3xl font-bold text-center text-slate-800 mb-6">Aplikasi Kuis</h1>
+            
+            <h2 class="text-lg font-semibold text-slate-700 mb-3">Pilih Mata Pelajaran:</h2>
+            
+            <!-- Spinner Pemuatan -->
+            <div id="loading-spinner" class="flex flex-col items-center justify-center my-6">
+                <svg class="w-8 h-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                <p class="mt-2 text-sm text-slate-600">Memuat daftar pelajaran...</p>
+            </div>
+            
+            <!-- Tombol subjek dinamis -->
+            <div id="subject-button-container" class="flex flex-col gap-3 mb-6 hidden">
+                <!-- Tombol akan di-generate oleh JavaScript -->
+            </div>
+
+            <button id="start-btn" class="w-full bg-green-600 text-white px-6 py-4 rounded-lg font-bold text-lg hover:bg-green-700 transition-all hidden">
+                Mulai Kuis
+            </button>
+        </div>
+        
+        <!-- 2. Kontainer Kuis (Mulai invisible dan hidden) -->
+        <div id="quiz-container" class="opacity-0 hidden">
+            <!-- Header (Judul & Kembali) -->
+            <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                <h1 id="quiz-title" class="text-xl font-bold text-slate-800">Kuis</h1>
+                <div class="flex items-center gap-3">
+                    <div id="timer-display" class="text-lg font-semibold text-red-600 bg-red-100 px-3 py-1 rounded-md">80:00</div>
+                    <!-- PERUBAHAN: Tombol Daftar Soal hilang di desktop (lg:hidden) -->
+                    <button id="open-nav-btn" class="text-sm text-white bg-blue-600 px-3 py-1 rounded-md hover:bg-blue-700 font-medium transition-all lg:hidden">
+                        Daftar Soal
+                    </button>
+                    <button id="back-to-menu-quiz-btn" class="text-sm text-blue-600 hover:underline">
+                        Kembali ke Menu
+                    </button>
+                </div>
+            </div>
+
+            <!-- PERUBAHAN: Layout 2 Kolom di Desktop -->
+            <div class="lg:flex lg:gap-6">
+                
+                <!-- Kolom Kiri (Soal) -->
+                <div id="quiz-content" class="w-full lg:w-7/12">
+                    
+                    <!-- WACANA / TEKS SOAL -->
+                    <div id="passage-container" class="mb-5 p-4 bg-gray-50 border rounded-lg max-h-48 overflow-y-auto hidden">
+                        <h4 id="passage-title" class="font-bold text-sm text-gray-700 mb-2"></h4>
+                        <div id="passage-content" class="text-sm text-gray-800 leading-relaxed"></div>
+                    </div>
+
+                    <!-- Spinner saat soal dimuat -->
+                    <div id="question-loading-spinner" class="hidden flex-col items-center justify-center my-6">
+                        <svg class="w-8 h-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                        <p class="mt-2 text-sm text-slate-600">Memuat soal...</p>
+                    </div>
+
+                    <div id="question-area" class="opacity-0"> <!-- Mulai transisi fade di sini -->
+                        <div id="question-counter" class="text-sm font-medium text-slate-600 bg-slate-200 px-3 py-1 rounded-full w-fit mb-4"></div>
+                        <div class="mb-5">
+                            <p id="question-text" class="text-lg font-semibold text-slate-900 leading-relaxed"></p>
+                        </div>
+                        <div id="options-container" class="flex flex-col gap-3"></div>
+                    </div>
+
+                    <!-- Box Penjelasan -->
+                    <div id="explanation-box" class="hidden mt-4 p-4 rounded-lg border">
+                        <p id="explanation-text" class="text-sm mt-1"></p>
+                    </div>
+
+                    <!-- Tombol Navigasi B/S (Layout BARU - Mobile First) -->
+                    <div class="flex flex-col sm:flex-row sm:justify-between items-center mt-6 gap-2">
+                        <button id="prev-btn" class="bg-slate-300 text-slate-700 px-5 py-2 rounded-lg font-medium hover:bg-slate-400 transition-all disabled:opacity-50 w-full sm:w-auto">
+                            Sebelumnya
+                        </button>
+                        
+                        <!-- Tombol Selesai (di tengah, order-first di mobile) -->
+                        <button id="finish-btn" class="bg-green-600 text-white px-5 py-3 sm:py-2 rounded-lg font-bold hover:bg-green-700 transition-all w-full sm:w-auto order-first sm:order-none text-lg sm:text-base">
+                            Selesai
+                        </button>
+                        
+                        <!-- BARU: Tombol Kembali dari Mode Review (Merah) -->
+                        <button id="review-back-btn" class="hidden bg-red-500 text-white px-5 py-3 sm:py-2 rounded-lg font-bold hover:bg-red-600 transition-all w-full sm:w-auto order-first sm:order-none text-lg sm:text-base">
+                            Kembali ke Menu Skor
+                        </button>
+                        
+                        <button id="next-btn" class="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition-all w-full sm:w-auto">
+                            Berikutnya
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan (Navigasi Desktop) BARU -->
+                <div id="desktop-nav-container" class="hidden lg:block lg:w-5/12">
+                    <h3 class="text-lg font-semibold text-slate-700 mb-4 dark:text-gray-200">Daftar Soal</h3>
+                    <!-- Panel navigasi khusus desktop -->
+                    <div id="desktop-nav-panel">
+                        <!-- Nomor-nomor akan di-inject di sini oleh JS -->
+                    </div>
+                </div>
+
+            </div> <!-- End 2 Kolom -->
+        </div>
+
+        <!-- 3. Kontainer Skor (Mulai invisible dan hidden) -->
+        <div id="score-container" class="opacity-0 hidden text-center">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4">Kuis Selesai!</h2>
+            <p class="text-xl text-slate-700 mb-2">Skor Anda:</p>
+            <p id="score-text" class="text-5xl font-bold text-blue-600 mb-6"></p>
+            
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <!-- PERUBAHAN: Tombol 'Lihat Pembahasan' diubah jadi ungu (purple) -->
+                <button id="review-btn" class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-all text-lg">
+                    Lihat Pembahasan
+                </button>
+                <button id="reset-btn" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-all text-lg">
+                    Ulangi Kuis
+                </button>
+                <button id="back-to-menu-score-btn" class="bg-slate-300 text-slate-700 px-6 py-3 rounded-lg font-medium hover:bg-slate-400 transition-all text-lg">
+                    Kembali ke Menu
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 4. Modal Navigasi Soal (Tersembunyi) -->
+    <div id="modal-backdrop-nav" class="modal-backdrop hidden opacity-0"></div>
+    <!-- PERBAIKAN: Padding diubah (p-4 sm:p-6) -->
+    <div id="modal-container-nav" class="modal-container bg-white rounded-xl shadow-2xl p-4 sm:p-6 hidden opacity-0">
+        <div class="flex justify-between items-center mb-4">
+            <h3 id="modal-nav-title" class="text-lg font-semibold text-slate-700">Daftar Soal</h3>
+            <!-- PERBAIKAN: Tombol (X) diubah menjadi balok merah muda/merah tua -->
+            <button id="close-nav-btn" class="p-1.5 rounded-md text-red-600 bg-red-100 hover:bg-red-200 dark:bg-red-800 dark:text-red-300 dark:hover:bg-red-700 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
+        <div id="quiz-nav-panel">
+            <!-- Nomor-nomor akan di-inject di sini -->
+        </div>
+    </div>
+    
+    <!-- 5. Modal Konfirmasi Selesai (BARU) -->
+    <div id="modal-backdrop-finish" class="modal-backdrop hidden opacity-0"></div>
+    <!-- PERBAIKAN: Padding diubah (p-4 sm:p-6) -->
+    <div id="modal-container-finish" class="modal-container bg-white rounded-xl shadow-2xl p-4 sm:p-6 hidden opacity-0">
+        <h3 class="text-xl font-bold text-slate-800 mb-4">Konfirmasi Selesai</h3>
+        <p class="text-slate-700 mb-6">Anda yakin sudah mengerjakan semua soal dan mengeceknya?</p>
+        <div class="flex justify-end gap-3">
+            <!-- PERUBAHAN: Class diubah dari bg-slate-300 menjadi bg-red-500 (merah) -->
+            <button id="cancel-finish-btn" class="bg-red-500 text-white px-5 py-2 rounded-lg font-medium hover:bg-red-600 transition-all">
+                Eh, gajadi
+            </button>
+            <button id="confirm-finish-btn" class="bg-green-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-green-700 transition-all">
+                Iya, udah nih
+            </button>
+        </div>
+    </div>
+    
+    <script type="module">
+        // --- VARIABEL GLOBAL APLIKASI ---
+        let allSubjects = []; 
+        let quizzesCache = new Map(); 
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = []; 
+        let selectedSubjectId = null; 
+        let activeQuizData = []; 
+        let timerInterval = null; 
+        let remainingTime = 80 * 60; 
+        let audioInitialized = false;
+        let isReviewMode = false; 
+        let isUserMuted = true; // DEFAULT-NYA MUTE (sesuai permintaan)
+
+        const HIGH_VOLUME = 1.0; // Volume normal (Menu/Skor)
+        const LOW_VOLUME = 0.7; // Volume rendah (Saat kuis) - Ditingkatkan ke 0.7
+        // --- REFERENSI ELEMEN DOM ---
+        const menuContainer = document.getElementById('menu-container');
+        const quizContainer = document.getElementById('quiz-container');
+        const scoreContainer = document.getElementById('score-container');
+        const subjectButtonContainer = document.getElementById('subject-button-container'); 
+        const startBtn = document.getElementById('start-btn');
+        const quizTitle = document.getElementById('quiz-title');
+        const questionCounter = document.getElementById('question-counter');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const explanationBox = document.getElementById('explanation-box');
+        const explanationText = document.getElementById('explanation-text');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const finishBtn = document.getElementById('finish-btn'); // Tombol Selesai BARU
+        const reviewBackBtn = document.getElementById('review-back-btn'); // Tombol Kembali Review BARU
+        const backToMenuQuizBtn = document.getElementById('back-to-menu-quiz-btn');
+        const scoreText = document.getElementById('score-text');
+        const resetBtn = document.getElementById('reset-btn');
+        const backToMenuScoreBtn = document.getElementById('back-to-menu-score-btn');
+        const reviewBtn = document.getElementById('review-btn'); 
+
+        // ELEMEN AUDIO & SETTINGS BARU/DIUBAH
+        const bgMusic = document.getElementById('bg-music');
+        const musicToggleButtonFloating = document.getElementById('music-toggle-btn-floating'); // Tombol floating musik
+        // const musicIconFloating = document.getElementById('music-icon-floating'); // Dihapus, diganti 2 ikon
+        const themeToggleButtonFloating = document.getElementById('theme-toggle-btn-floating'); // Tombol floating tema
+        // const themeAutoBtn = document.getElementById('theme-auto-btn'); // Tombol Auto-Tema DIHAPUS
+        const themeSunIcon = document.getElementById('theme-sun-icon');
+        const themeMoonIcon = document.getElementById('theme-moon-icon');
+
+        // Modal Navigasi
+        const modalBackdropNav = document.getElementById('modal-backdrop-nav');
+        const modalContainerNav = document.getElementById('modal-container-nav');
+        const openNavBtn = document.getElementById('open-nav-btn');
+        const closeNavBtn = document.getElementById('close-nav-btn');
+        const modalNavTitle = document.getElementById('modal-nav-title'); 
+        const quizNavPanel = document.getElementById('quiz-nav-panel'); 
+        
+        // PERUBAHAN: Panel navigasi desktop BARU
+        const desktopNavPanel = document.getElementById('desktop-nav-panel'); 
+        
+        // Modal Konfirmasi Selesai (BARU)
+        const modalBackdropFinish = document.getElementById('modal-backdrop-finish');
+        const modalContainerFinish = document.getElementById('modal-container-finish');
+        const confirmFinishBtn = document.getElementById('confirm-finish-btn');
+        const cancelFinishBtn = document.getElementById('cancel-finish-btn');
+
+
+        const timerDisplay = document.getElementById('timer-display');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const questionLoadingSpinner = document.getElementById('question-loading-spinner');
+        const questionArea = document.getElementById('question-area');
+        const passageContainer = document.getElementById('passage-container');
+        const passageTitleEl = document.getElementById('passage-title');
+        const passageContentEl = document.getElementById('passage-content');
+
+        // --- SETUP AUDIO (TONE.JS HANYA UNTUK SFX) ---
+        // SFX Synths tidak akan di-mute oleh Tone.Master, sehingga selalu terdengar
+        
+        /* PERUBAHAN: Membagi SFX Pop menjadi 3 nada */
+        const popSfxHigh = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.1 } }).toDestination(); // C6 - Nada tinggi (Next, Open)
+        const popSfxMid = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.1 } }).toDestination();  // G5 - Nada sedang (Pilihan Jawaban)
+        const popSfxLow = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.1 } }).toDestination();   // C5 - Nada rendah (Prev, Close)
+        
+        const correctSfx = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination();
+        const wrongSfx = new Tone.FMSynth({ harmonicity: 8, modulationIndex: 2, oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.1 } }).toDestination();
+        const alarmSfx = new Tone.Synth({ oscillator: { type: 'sawtooth' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.2 } }).toDestination();
+        
+        
+        // --- FUNGSI AUDIO ---
+        
+        /**
+         * Menginisialisasi audio (SFX dan Unmute Musik) pada interaksi pertama user
+         */
+        async function initAudio() {
+            if (audioInitialized) return;
+            try {
+                await Tone.start(); 
+                bgMusic.volume = HIGH_VOLUME;
+                audioInitialized = true;
+            } catch (e) {
+                console.warn("Audio gagal dimulai.", e);
+            }
+        }
+        
+        /**
+         * Memperbarui status mute musik secara global (ikon dan volume)
+         * @param {boolean} shouldMute - Status mute yang diinginkan.
+         */
+        function updateMusicState(shouldMute) {
+            isUserMuted = shouldMute;
+            // PENTING: Tone.Master.mute DIHILANGKAN agar SFX (pop, correct, wrong) selalu aktif
+            bgMusic.muted = shouldMute; 
+
+            // Update style tombol floating
+            musicToggleButtonFloating.classList.toggle('is-muted', shouldMute);
+            musicToggleButtonFloating.classList.toggle('is-unmuted', !shouldMute);
+            
+            // PERUBAHAN: Ikon tidak lagi diubah via innerHTML, tapi via class di CSS
+            
+            // Mengganti warna latar tombol floating (Merah/Hijau)
+            musicToggleButtonFloating.style.backgroundColor = shouldMute ? '#fee2e2' : '#dcfce7'; 
+            musicToggleButtonFloating.style.color = shouldMute ? '#b91c1c' : '#166534';
+            
+            // Jika musik di-unmute (shouldMute=false), coba paksa main
+            if (!shouldMute) {
+                bgMusic.play().catch(e => console.warn("Play on unmute failed:", e));
+            }
+        }
+
+        /**
+         * Mengatur volume MP3 saat masuk/keluar kuis
+         * @param {number} volume - HIGH_VOLUME atau LOW_VOLUME.
+         */
+        function setMusicVolume(volume) {
+             // Pastikan volume hanya diatur jika tidak di-mute oleh user
+            if (!isUserMuted) {
+                 bgMusic.volume = volume;
+            }
+        }
+
+
+        // --- SETUP CANVAS BACKGROUND ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        class Particle {
+            constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 15 + 10; this.speedX = Math.random() * 1 - 0.5; this.speedY = Math.random() * 1 - 0.5; this.type = Math.random() > 0.5 ? 'book' : 'pen'; 
+            // Mengubah warna partikel agar tidak mengganggu kontras dark mode
+            this.color = document.body.classList.contains('dark') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(59, 130, 246, 0.2)';
+            this.rotation = Math.random() * 360; }
+            update() { this.x += this.speedX; this.y += this.speedY; this.rotation += 0.1; if (this.x < 0 || this.x > canvas.width) this.speedX *= -1; if (this.y < 0 || this.y > canvas.height) this.speedY *= -1; }
+            draw() { ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rotation * Math.PI / 180); ctx.fillStyle = this.color; if (this.type === 'book') { ctx.fillRect(-this.size / 2, -this.size / 1.5 / 2, this.size, this.size / 1.5); ctx.fillStyle = "rgba(255, 255, 255, 0.5)"; ctx.fillRect(-this.size / 2, -this.size / 1.5 / 2, 3, this.size / 1.5); } else { ctx.fillRect(-this.size / 2, -this.size / 8 / 2, this.size, this.size / 8); ctx.beginPath(); ctx.moveTo(this.size / 2, -this.size / 8 / 2); ctx.lineTo(this.size / 2 + 5, 0); ctx.lineTo(this.size / 2, this.size / 8 / 2); ctx.fill(); } ctx.restore(); }
+        }
+        function initParticles() { particles = []; for (let i = 0; i < 40; i++) { particles.push(new Particle()); } }
+        function animateCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); for (let i = 0; i < particles.length; i++) { particles[i].update(); particles[i].draw(); } requestAnimationFrame(animateCanvas); }
+
+        // --- FUNGSI MODAL (BARU DENGAN FADE) ---
+        function openNavModal() { 
+            popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now()); 
+            modalNavTitle.textContent = isReviewMode ? "Daftar Soal (Review)" : "Daftar Soal"; 
+            modalBackdropNav.classList.remove('hidden'); 
+            modalContainerNav.classList.remove('hidden'); 
+            setTimeout(() => { // Tunda fade in
+                 modalBackdropNav.classList.remove('opacity-0');
+                 modalContainerNav.classList.remove('opacity-0');
+            }, 10);
+        }
+        function closeNavModal(playSound = true) { 
+            if (playSound) { popSfxLow.triggerAttackRelease('C5', '16n', Tone.now()); } 
+            modalBackdropNav.classList.add('opacity-0'); 
+            modalContainerNav.classList.add('opacity-0');
+            setTimeout(() => { // Tunda hidden
+                 modalBackdropNav.classList.add('hidden'); 
+                 modalContainerNav.classList.add('hidden'); 
+            }, 300);
+        }
+        function openFinishModal() {
+            popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now());
+            modalBackdropFinish.classList.remove('hidden');
+            modalContainerFinish.classList.remove('hidden');
+            setTimeout(() => {
+                modalBackdropFinish.classList.remove('opacity-0');
+                modalContainerFinish.classList.remove('opacity-0');
+            }, 10);
+        }
+        function closeFinishModal(playSound = true) {
+            if (playSound) { popSfxLow.triggerAttackRelease('C5', '16n', Tone.now()); }
+            modalBackdropFinish.classList.add('opacity-0');
+            modalContainerFinish.classList.add('opacity-0');
+            setTimeout(() => {
+                modalBackdropFinish.classList.add('hidden');
+                modalContainerFinish.classList.add('hidden');
+            }, 300);
+        }
+
+        
+        // --- FUNGSI TIMER ---
+        function updateTimer() {
+            remainingTime--;
+            const minutes = Math.floor(remainingTime / 60);
+            const seconds = remainingTime % 60;
+            timerDisplay.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            if (remainingTime <= 0) {
+                clearInterval(timerInterval);
+                alarmSfx.triggerAttackRelease('A5', '8n', Tone.now());
+                alarmSfx.triggerAttackRelease('A5', '8n', Tone.now() + 0.4);
+                alarmSfx.triggerAttackRelease('A5', '8n', Tone.now() + 0.8);
+                showScore(); // Auto-submit
+            }
+        }
+
+        // --- FUNGSI NAVIGASI LAYAR (DENGAN FADE EFX) ---
+        
+        async function startQuiz(subjectId) {
+            isReviewMode = false; 
+            await initAudio(); // Inisialisasi Tone.js/SFX
+            popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now());
+            
+            menuContainer.classList.add('opacity-0');
+            questionArea.classList.add('opacity-0'); // Mulai dengan soal fade out
+            questionLoadingSpinner.classList.remove('hidden'); 
+            passageContainer.classList.add('hidden'); 
+
+            setTimeout(async () => {
+                menuContainer.classList.add('hidden');
+                quizContainer.classList.remove('hidden'); 
+                setTimeout(() => quizContainer.classList.remove('opacity-0'), 10);
+
+                setMusicVolume(LOW_VOLUME); // Volume turun saat kuis
+
+                try {
+                    let flatQuestions = []; 
+                    if (quizzesCache.has(subjectId)) {
+                        flatQuestions = quizzesCache.get(subjectId);
+                    } else {
+                        const response = await fetch(`./data/${subjectId}.json`);
+                        if (!response.ok) throw new Error(`File data/${subjectId}.json tidak ditemukan.`);
+                        const fetchedData = await response.json();
+                        
+                        if (fetchedData.length > 0 && fetchedData[0].questions) {
+                            fetchedData.forEach(group => {
+                                group.questions.forEach(q => {
+                                    flatQuestions.push({
+                                        ...q, 
+                                        passageTitle: group.passageTitle, 
+                                        passageText: group.passageText   
+                                    });
+                                });
+                            });
+                        } else {
+                            flatQuestions = fetchedData;
+                        }
+                        quizzesCache.set(subjectId, flatQuestions); 
+                    }
+
+                    activeQuizData = flatQuestions;
+                    const subject = allSubjects.find(s => s.id === subjectId);
+                    quizTitle.textContent = subject.title;
+
+                    currentQuestionIndex = 0;
+                    score = 0;
+                    userAnswers = new Array(activeQuizData.length).fill(null); 
+                    
+                    generateQuestionPanel(); 
+                    remainingTime = 80 * 60; 
+                    if (timerInterval) clearInterval(timerInterval);
+                    timerInterval = setInterval(updateTimer, 1000);
+                    updateTimer(); 
+
+                    // PERBAIKAN BUG FADE-IN: Tunggu loadQuestion (termasuk MathJax) selesai
+                    loadQuestion().then(() => {
+                        questionLoadingSpinner.classList.add('hidden'); 
+                        questionArea.classList.remove('opacity-0'); // Fade in
+                    });
+
+                } catch (error) {
+                    console.error("Gagal memuat kuis:", error);
+                    alert("Gagal memuat data kuis. Pastikan file .json ada di folder /data/.");
+                    goToMenu();
+                }
+            }, 300); 
+        }
+
+        function goToMenu() {
+            isReviewMode = false; 
+            setMusicVolume(HIGH_VOLUME); // Volume naik ke normal
+            if (timerInterval) clearInterval(timerInterval); 
+            
+            const activeContainer = !quizContainer.classList.contains('hidden') ? quizContainer : scoreContainer;
+            
+            activeContainer.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                activeContainer.classList.add('hidden');
+                menuContainer.classList.remove('hidden'); 
+                
+                setTimeout(() => menuContainer.classList.remove('opacity-0'), 10);
+            }, 300);
+        }
+
+        async function restartQuiz() {
+            isReviewMode = false; 
+            await initAudio(); 
+            popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now());
+
+            scoreContainer.classList.add('opacity-0');
+
+            setTimeout(() => {
+                scoreContainer.classList.add('hidden');
+                quizContainer.classList.remove('hidden'); 
+                
+                questionArea.classList.add('opacity-0'); // Mulai fade out
+                questionLoadingSpinner.classList.remove('hidden');
+
+                setTimeout(() => quizContainer.classList.remove('opacity-0'), 10);
+                
+                currentQuestionIndex = 0;
+                score = 0;
+                userAnswers = new Array(activeQuizData.length).fill(null); 
+                
+                generateQuestionPanel(); 
+                remainingTime = 80 * 60; 
+                if (timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(updateTimer, 1000);
+                updateTimer(); 
+
+                // PERBAIKAN BUG FADE-IN
+                loadQuestion().then(() => {
+                    questionLoadingSpinner.classList.add('hidden'); 
+                    questionArea.classList.remove('opacity-0'); // Fade in
+                });
+
+                setMusicVolume(LOW_VOLUME); // Volume turun saat kuis
+                
+            }, 300);
+        }
+
+        // BARU: Fungsi untuk menghitung skor
+        function calculateScore() {
+            score = 0; // Reset skor
+            for (let i = 0; i < activeQuizData.length; i++) {
+                if (userAnswers[i] === activeQuizData[i].correctAnswer) {
+                    score++;
+                }
+            }
+        }
+
+        function showScore() {
+            // PERUBAHAN: Skor dihitung HANYA saat kuis selesai
+            if (!isReviewMode) {
+                calculateScore();
+            }
+            
+            quizContainer.classList.add('opacity-0');
+            closeFinishModal(false); // Tutup modal konfirmasi jika terbuka
+
+            setTimeout(() => {
+                quizContainer.classList.add('hidden');
+                scoreContainer.classList.remove('hidden'); 
+                
+                setTimeout(() => scoreContainer.classList.remove('opacity-0'), 10);
+
+                scoreText.textContent = `${score} / ${activeQuizData.length}`;
+                
+                // PERUBAHAN: Selalu set isReviewMode ke false saat kembali ke skor
+                isReviewMode = false; 
+                
+                // if (!isReviewMode) { // Cek ini tidak lagi diperlukan
+                    setMusicVolume(HIGH_VOLUME); // Volume naik ke normal
+                    if (timerInterval) clearInterval(timerInterval); 
+                // }
+                
+                closeNavModal(false); 
+            }, 300);
+        }
+        
+        function startReview() {
+            isReviewMode = true;
+            currentQuestionIndex = 0;
+
+            scoreContainer.classList.add('opacity-0');
+
+            setTimeout(() => {
+                scoreContainer.classList.add('hidden');
+                quizContainer.classList.remove('hidden'); 
+                questionArea.classList.add('opacity-0'); // Mulai fade out
+                
+                setTimeout(() => quizContainer.classList.remove('opacity-0'), 10);
+                
+                setMusicVolume(LOW_VOLUME); // Volume turun saat kuis
+                
+                // PERBAIKAN BUG FADE-IN
+                loadQuestion().then(() => {
+                    questionArea.classList.remove('opacity-0'); // Fade in
+                });
+            }, 300);
+        }
+
+        // --- FUNGSI LOGIKA KUIS LAIN ---
+        /* PERUBAHAN: Sekarang mengisi kedua panel (modal & desktop) */
+        function generateQuestionPanel() {
+            quizNavPanel.innerHTML = ''; 
+            desktopNavPanel.innerHTML = ''; // Kosongkan panel desktop
+            
+            for (let i = 0; i < activeQuizData.length; i++) {
+                const button = document.createElement('button');
+                button.textContent = i + 1;
+                button.className = 'q-nav-btn q-nav-unanswered'; 
+                button.dataset.index = i; // Gunakan data-index
+                button.addEventListener('click', () => jumpToQuestion(i, true)); // true = from modal
+                
+                const desktopButton = button.cloneNode(true); // Duplikat tombol
+                desktopButton.addEventListener('click', () => jumpToQuestion(i, false)); // false = from desktop
+                
+                quizNavPanel.appendChild(button);
+                desktopNavPanel.appendChild(desktopButton);
+            }
+        }
+        
+        /* PERUBAHAN: Logika panel navigasi diubah & pakai querySelectorAll */
+        function updateQuestionPanelState() {
+            // PERUBAHAN: Gunakan querySelectorAll.q-nav-btn
+            const allNavButtons = document.querySelectorAll('.q-nav-btn');
+            
+            allNavButtons.forEach(button => {
+                const index = parseInt(button.dataset.index); // Ambil index dari data-*
+                if (isNaN(index)) return;
+
+                button.className = 'q-nav-btn'; // Reset class
+                
+                if (index === currentQuestionIndex) {
+                    button.classList.add('q-nav-active'); // Selalu kuning untuk soal aktif
+                
+                } else if (userAnswers[index] !== null) {
+                    if (isReviewMode) {
+                        // Mode Review: Tampilkan Hijau/Merah
+                        const isCorrect = (userAnswers[index] === activeQuizData[index].correctAnswer);
+                        button.classList.add(isCorrect ? 'q-nav-answered' : 'q-nav-wrong-answered');
+                    } else {
+                        // Mode Kuis Normal: Tampilkan Biru Netral
+                        button.classList.add('q-nav-answered-quiz'); 
+                    }
+                } else {
+                    button.classList.add('q-nav-unanswered'); 
+                }
+            });
+        }
+        
+        /* PERUBAHAN: Tambah parameter 'fromModal' */
+        function jumpToQuestion(index, fromModal = false) {
+            popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now());
+            questionArea.classList.add('opacity-0'); // Fade out soal
+            setTimeout(() => {
+                currentQuestionIndex = index;
+                // PERBAIKAN BUG: Tunggu loadQuestion (termasuk MathJax) selesai, baru fade in
+                loadQuestion().then(() => { 
+                    setTimeout(() => questionArea.classList.remove('opacity-0'), 10); // Fade in
+                });
+            }, 300);
+            
+            if (fromModal) {
+                closeNavModal(false); // Tutup modal HANYA jika klik dari modal
+            }
+        }
+        
+        // --- FUNGSI LOADQUESTION (DENGAN MATHJAX DAN FADE IN) ---
+        /* PERUBAHAN: Logika Tampilan dipecah */
+        function loadQuestion() {
+            explanationBox.classList.add('hidden'); 
+            optionsContainer.innerHTML = ''; 
+            const questionData = activeQuizData[currentQuestionIndex];
+
+            if (questionData.passageText) {
+                passageTitleEl.innerHTML = questionData.passageTitle; // Pakai innerHTML
+                passageContentEl.innerHTML = questionData.passageText; // Pakai innerHTML
+                passageContainer.classList.remove('hidden');
+            } else {
+                passageContainer.classList.add('hidden');
+            }
+
+            questionText.innerHTML = questionData.question; // Pakai innerHTML
+            questionCounter.textContent = `Soal ${currentQuestionIndex + 1} dari ${activeQuizData.length}`;
+            questionData.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                const optionLetter = String.fromCharCode(65 + index);
+                button.innerHTML = `${optionLetter}. ${option}`; // Pakai innerHTML
+                button.className = 'option-btn border border-slate-300 rounded-lg p-3 text-left w-full transition-all duration-200 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500';
+                
+                if (!isReviewMode) {
+                    button.addEventListener('click', () => handleAnswer(index));
+                }
+                
+                optionsContainer.appendChild(button);
+            });
+            
+            updateNavButtons();
+            updateQuestionPanelState(); 
+            
+            if (isReviewMode) {
+                // --- MODE REVIEW ---
+                // Tampilkan jawaban benar/salah dan penjelasan
+                timerDisplay.classList.add('hidden');
+                showFeedback(userAnswers[currentQuestionIndex] !== null ? userAnswers[currentQuestionIndex] : -1); 
+            } else {
+                // --- MODE KUIS NORMAL ---
+                // Hanya tampilkan jawaban yang dipilih (jika ada), TANPA penjelasan
+                timerDisplay.classList.remove('hidden');
+                explanationBox.classList.add('hidden'); // Pastikan penjelasan tersembunyi
+                
+                const selectedAnswer = userAnswers[currentQuestionIndex];
+                if (selectedAnswer !== null) {
+                    const buttons = optionsContainer.getElementsByTagName('button');
+                    if (buttons[selectedAnswer]) {
+                        buttons[selectedAnswer].classList.add('selected-answer');
+                        // PERUBAHAN: Tombol tidak lagi di-disable saat kuis
+                        // buttons.forEach(btn => btn.disabled = true); 
+                    }
+                }
+            }
+            
+            // Panggil MathJax untuk merender semua teks baru
+            // PERBAIKAN BUG: Kembalikan Promise agar transisi bisa menunggu
+            if (window.MathJax) {
+                return MathJax.typesetPromise([passageContainer, questionArea, optionsContainer])
+                    .catch((err) => console.log('MathJax error:', err))
+                    .finally(() => {
+                        // PERBAIKAN BUG FADE-IN: Dihapus dari sini, dipindah ke 'caller' (nextBtn/prevBtn)
+                        // questionArea.classList.remove('opacity-0');
+                    });
+            } else {
+                // Fallback jika MathJax gagal
+                // questionArea.classList.remove('opacity-0');
+                return Promise.resolve(); // Kembalikan promise kosong
+            }
+        }
+        
+        /* PERUBAHAN: handleAnswer (Mode Kuis) */
+        function handleAnswer(selectedOptionIndex) {
+            // (Mode review tidak memanggil ini)
+            
+            popSfxMid.triggerAttackRelease('G5', '16n', Tone.now()); // Suara sedang (G5)
+            
+            userAnswers[currentQuestionIndex] = selectedOptionIndex; // Simpan jawaban
+            
+            // Perbarui tampilan tombol (HANYA tanda biru)
+            const buttons = optionsContainer.getElementsByTagName('button');
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('selected-answer'); // Hapus pilihan lama
+                // PERUBAHAN: Tombol tidak lagi di-disable
+                // buttons[i].disabled = true; 
+            }
+            buttons[selectedOptionIndex].classList.add('selected-answer'); // Tandai pilihan baru
+            
+            updateQuestionPanelState(); // Perbarui panel navigasi (jadi biru)
+        }
+        
+        // --- FUNGSI SHOWFEEDBACK (DENGAN MATHJAX) ---
+        /* PERUBAHAN: Fungsi ini HANYA dipanggil dalam Mode Review */
+        function showFeedback(selectedOptionIndex) {
+            const correctAnswerIndex = activeQuizData[currentQuestionIndex].correctAnswer;
+            const questionData = activeQuizData[currentQuestionIndex];
+            const buttons = optionsContainer.getElementsByTagName('button');
+
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true; // Di mode review, tombol dikunci
+                if (i === correctAnswerIndex) {
+                    buttons[i].classList.add('correct-answer'); // Tampilkan Hijau
+                } else if (i === selectedOptionIndex) {
+                    buttons[i].classList.add('wrong-answer'); // Tampilkan Merah
+                }
+            }
+            
+            const isCorrect = (selectedOptionIndex === correctAnswerIndex);
+            if (isCorrect) {
+                explanationText.innerHTML = `<strong>Penjelasan:</strong> ${questionData.explanation}`; // Pakai innerHTML
+                explanationBox.className = 'mt-4 p-4 rounded-lg border explanation-correct';
+            } else {
+                const correctLetter = String.fromCharCode(65 + correctAnswerIndex);
+                if (selectedOptionIndex === -1) {
+                     explanationText.innerHTML = `<strong>Anda tidak menjawab.</strong> Jawaban benar: ${correctLetter}.<br><br><strong>Penjelasan:</strong> ${questionData.explanation}`; // Pakai innerHTML
+                } else {
+                    explanationText.innerHTML = `<strong>Jawaban benar: ${correctLetter}.</strong><br><br><strong>Penjelasan:</strong> ${questionData.explanation}`; // Pakai innerHTML
+                }
+                explanationBox.className = 'mt-4 p-4 rounded-lg border explanation-wrong';
+            }
+            explanationBox.classList.remove('hidden'); // Tampilkan penjelasan
+            
+            updateQuestionPanelState();
+            
+            // Panggil MathJax untuk merender penjelasan
+            if (window.MathJax) {
+                MathJax.typesetPromise([explanationBox]).catch((err) => console.log('MathJax error:', err));
+            }
+        }
+        
+        /* PERBAIKAN LOGIKA TOMBOL NAVIGASI */
+        function updateNavButtons() {
+            prevBtn.disabled = (currentQuestionIndex === 0);
+
+            if (isReviewMode) {
+                // --- MODE REVIEW (PERUBAHAN LOGIKA) ---
+                finishBtn.classList.add('hidden'); // 1. Sembunyikan tombol "Selesai" (Hijau)
+                reviewBackBtn.classList.remove('hidden'); // 2. Tampilkan "Kembali ke Menu Skor" (Merah)
+                
+                if (currentQuestionIndex === activeQuizData.length - 1) {
+                    // Soal terakhir di mode review
+                    nextBtn.classList.add('hidden'); // Sembunyikan "Berikutnya"
+                } else {
+                    // Belum soal terakhir
+                    nextBtn.classList.remove('hidden'); // Tampilkan "Berikutnya"
+                    nextBtn.textContent = 'Berikutnya';
+                    nextBtn.disabled = false;
+                }
+            } else {
+                // --- MODE KUIS NORMAL ---
+                finishBtn.classList.remove('hidden'); // Tampilkan "Selesai"
+                reviewBackBtn.classList.add('hidden'); // Sembunyikan "Kembali ke Menu Skor"
+                nextBtn.classList.remove('hidden'); // Tampilkan "Berikutnya"
+                
+                nextBtn.disabled = (currentQuestionIndex === activeQuizData.length - 1);
+                nextBtn.textContent = 'Berikutnya';
+            }
+        }
+
+        
+        function buildSubjectButtons(subjects) { /* (Tidak berubah) */
+            subjectButtonContainer.innerHTML = ''; 
+            let isFirst = true;
+            
+            subjects.forEach((subject) => {
+                const button = document.createElement('button');
+                button.id = `subject-${subject.id}`;
+                button.textContent = subject.title;
+                button.className = `subject-btn w-full p-4 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all ${isFirst ? 'subject-active' : 'subject-inactive'}`;
+                
+                button.addEventListener('click', async () => {
+                    // Trigger first interaction handler
+                    await firstInteractionHandler();
+                    popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now());
+                    
+                    selectedSubjectId = subject.id; 
+
+                    document.querySelectorAll('.subject-btn').forEach(btn => {
+                        btn.classList.remove('subject-active');
+                        btn.classList.add('subject-inactive');
+                    });
+                    button.classList.add('subject-active');
+                    button.classList.remove('subject-inactive');
+                });
+
+                subjectButtonContainer.appendChild(button);
+                
+                if (isFirst) {
+                    selectedSubjectId = subject.id; 
+                    isFirst = false;
+                }
+            });
+
+            const comingSoonBtn = document.createElement('button');
+            comingSoonBtn.textContent = 'Sejarah (Segera Hadir)';
+            comingSoonBtn.className = 'subject-btn w-full p-4 rounded-lg bg-slate-200 text-slate-500 font-medium text-lg cursor-not-allowed';
+            comingSoonBtn.disabled = true;
+            subjectButtonContainer.appendChild(comingSoonBtn);
+        }
+        async function loadSubjects() {
+            try {
+                const response = await fetch('./subjects.json'); 
+                if (!response.ok) throw new Error('subjects.json tidak ditemukan.');
+                
+                allSubjects = await response.json();
+
+                if (allSubjects.length === 0) {
+                    throw new Error("Tidak ada pelajaran di subjects.json");
+                }
+
+                buildSubjectButtons(allSubjects); 
+                loadingSpinner.classList.add('hidden'); 
+                subjectButtonContainer.classList.remove('hidden'); 
+                startBtn.classList.remove('hidden'); 
+
+            } catch (error) {
+                console.error("Error memuat daftar pelajaran:", error);
+                loadingSpinner.innerHTML = `
+                    <strong class="text-red-600">Error: Gagal Memuat Daftar Pelajaran</strong>
+                    <p class="mt-2 text-sm text-slate-600">
+                        Pastikan file <strong>subjects.json</strong> ada di folder yang sama dengan file HTML ini.
+                    </p>`;
+            }
+        }
+
+
+        // --- LOGIKA TEMA ---
+        function applyTheme(theme) { // Parameter isAuto dihapus
+            if (theme === 'dark') {
+                document.body.classList.add('dark');
+                // localStorage.setItem('theme', 'dark'); // Dihapus, di-handle oleh listener
+                // PERUBAHAN: Logika 'hidden' dipindah ke CSS
+            } else {
+                document.body.classList.remove('dark');
+                // localStorage.setItem('theme', 'light'); // Dihapus, di-handle oleh listener
+                // PERUBAHAN: Logika 'hidden' dipindah ke CSS
+            }
+            themeToggleButtonFloating.classList.toggle('active', theme === 'light');
+            
+            // Logika tombol Auto dihapus
+            
+            initParticles(); // Re-initialize particles to update color for dark mode
+        }
+
+        /* PERUBAHAN: Fungsi loadTheme sekarang mendeteksi pengaturan device */
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            
+            if (savedTheme) {
+                // 1. Prioritas utama: Pilihan manual pengguna (dari klik tombol)
+                applyTheme(savedTheme); // isAuto dihapus
+            } else if (window.matchMedia) {
+                // 2. Prioritas kedua: Deteksi pengaturan device
+                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                
+                // Terapkan tema yang terdeteksi saat ini
+                applyTheme(mediaQuery.matches ? 'dark' : 'light'); // isAuto dihapus
+                
+                // Tambahkan listener untuk mendeteksi perubahan di device
+                mediaQuery.addEventListener('change', (e) => {
+                    // Cek lagi, JIKA pengguna MASIH BELUM memilih manual,
+                    // maka ikuti perubahan device.
+                    if (!localStorage.getItem('theme')) {
+                        applyTheme(e.matches ? 'dark' : 'light'); // isAuto dihapus
+                    }
+                });
+            } else {
+                // 3. Fallback: Default ke mode terang jika media query tidak didukung
+                applyTheme('light'); // isAuto dihapus
+            }
+        }
+
+        /**
+         * Handler one-time untuk memastikan Tone.js aktif pada interaksi pertama.
+         */
+        async function firstInteractionHandler() {
+            // Hapus listener global setelah dipanggil
+            document.body.removeEventListener('click', firstInteractionHandler);
+            document.body.removeEventListener('touchstart', firstInteractionHandler);
+
+            // Kita hanya perlu inisialisasi Tone.js/SFX di sini.
+            if (!audioInitialized) {
+                await initAudio(); 
+                bgMusic.play().catch(e => console.warn("Play on tap failed:", e)); 
+            }
+        }
+
+
+        // --- TITIK MULAI APLIKASI ---
+        window.addEventListener('load', () => {
+            loadTheme(); // Muat tema tersimpan
+            resizeCanvas();
+            initParticles();
+            animateCanvas();
+            window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+            loadSubjects();
+            
+            // Coba mainkan musik (muted) saat load
+            bgMusic.play().catch(e => console.warn("Autoplay (muted) gagal.", e));
+            
+            // Set ikon status musik awal (muted)
+            updateMusicState(isUserMuted);
+
+            // Tambahkan event listener untuk interaksi pertama di body
+            // Interaksi pertama akan membuat Tone.js siap dan musik play (muted)
+            document.body.addEventListener('click', firstInteractionHandler);
+            document.body.removeEventListener('touchstart', firstInteractionHandler);
+        });
+
+        // Event Listener Tombol Menu
+        startBtn.addEventListener('click', async () => {
+            // Cukup panggil initAudio agar SFX siap, tidak perlu logika unmute di sini.
+            await initAudio(); 
+            if (selectedSubjectId) {
+                startQuiz(selectedSubjectId);
+            } else {
+                alert("Silakan pilih mata pelajaran terlebih dahulu.");
+            }
+        });
+
+        // Event Listener Kuis
+        nextBtn.addEventListener('click', () => {
+            popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now()); // PERBAIKAN: SFX ditambahkan (Tinggi)
+            questionArea.classList.add('opacity-0'); // 1. Fade out soal
+            setTimeout(() => {
+                currentQuestionIndex++;
+                // 2. Muat soal, TUNGGU MathJax, 3. Fade in
+                loadQuestion().then(() => { 
+                    setTimeout(() => questionArea.classList.remove('opacity-0'), 10);
+                });
+            }, 300); // 4. Tunggu fade out selesai
+        });
+        
+        prevBtn.addEventListener('click', () => {
+            popSfxLow.triggerAttackRelease('C5', '16n', Tone.now()); // PERBAIKAN: SFX ditambahkan (Rendah)
+            questionArea.classList.add('opacity-0'); // 1. Fade out soal
+            setTimeout(() => {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    // 2. Muat soal, TUNGGU MathJax, 3. Fade in
+                    loadQuestion().then(() => {
+                        setTimeout(() => questionArea.classList.remove('opacity-0'), 10);
+                    });
+                } else {
+                    questionArea.classList.remove('opacity-0'); // Batal fade out jika di soal pertama
+                }
+            }, 300); // 4. Tunggu fade out selesai
+        });
+        
+        finishBtn.addEventListener('click', openFinishModal); // Tombol Selesai BARU
+        reviewBackBtn.addEventListener('click', showScore); // BARU: Tombol Kembali Review (langsung ke skor)
+        
+        backToMenuQuizBtn.addEventListener('click', goToMenu);
+
+        // Event Listener Skor
+        reviewBtn.addEventListener('click', startReview); 
+        resetBtn.addEventListener('click', restartQuiz);
+        backToMenuScoreBtn.addEventListener('click', goToMenu); 
+
+        // --- EVENT LISTENER PENGATURAN FLOATING ---
+
+        // Toggle Musik Floating
+        musicToggleButtonFloating.addEventListener('click', async () => {
+             // Pastikan Tone.js sudah diinisialisasi (misal, saat klik tombol Volume ini)
+            await initAudio(); 
+            
+            // Toggle state-nya
+            const newMuteState = !isUserMuted;
+            updateMusicState(newMuteState);
+            
+            // Atur volume berdasarkan di mana dia berada (Hanya jika di-unmute)
+            if (!newMuteState && quizContainer.classList.contains('hidden')) {
+                 setMusicVolume(HIGH_VOLUME); // Menu/Skor
+            } else if (!newMuteState && !quizContainer.classList.contains('hidden')) {
+                 setMusicVolume(LOW_VOLUME); // Kuis
+            }
+        });
+
+        // Toggle Tema Floating (MANUAL)
+        themeToggleButtonFloating.addEventListener('click', () => {
+            const currentTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            // Saat user klik, ini dihitung sebagai pilihan manual
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme); // isAuto dihapus
+        });
+        
+        // BARU: Tombol Auto-Tema (DIHAPUS)
+        /*
+        themeAutoBtn.addEventListener('click', () => {
+             localStorage.removeItem('theme'); // Hapus override manual
+             loadTheme(); // Muat ulang tema (akan mendeteksi device)
+        });
+        */
+
+
+        // Event Listener Modal Navigasi (tetap)
+        openNavBtn.addEventListener('click', openNavModal);
+        closeNavBtn.addEventListener('click', () => closeNavModal(true));
+        modalBackdropNav.addEventListener('click', () => closeNavModal(true));
+        
+        // Event Listener Modal Selesai (BARU)
+        cancelFinishBtn.addEventListener('click', () => closeFinishModal(true));
+        modalBackdropFinish.addEventListener('click', () => closeFinishModal(true));
+        confirmFinishBtn.addEventListener('click', () => {
+            popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now());
+            // Tutup modal dulu (tanpa suara), baru tampilkan skor
+            closeFinishModal(false); 
+            showScore();
+        });
+
+    </script>
+</body>
+</html>

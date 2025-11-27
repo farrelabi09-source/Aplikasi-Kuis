@@ -1,0 +1,26 @@
+[
+    {
+        "id": "Ekonomi",
+        "title": "Kuis PAS Ekonomi"
+    },
+    {
+        "id": "Kimia",
+        "title": "Kuis PAS Kimia"
+    },
+    {
+        "id": "BahasaInggris",
+        "title": "Kuis PAS Bahasa Inggris"
+    },
+    {
+        "id": "Matematika",
+        "title": "Kuis PAS Matematika"
+    },
+    {
+        "id": "MuatanLokal",
+        "title": "Kuis PAS Muatan Lokal"
+    },
+    {
+        "id": "SeniBudaya",
+        "title": "Kuis PAS Seni Budaya"
+    }
+]
