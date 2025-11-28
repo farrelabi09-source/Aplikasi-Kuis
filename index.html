@@ -9,16 +9,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     
-    <!-- Script untuk merender rumus Matematika (MathJax) -->
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <!-- Konfigurasi MathJax agar mengenali \(...\) -->
-    <script>
+    <!-- SCRIPT MATHJAX DIHAPUS -->
+    <!-- <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> -->
+    <!-- <script>
         MathJax = {
           tex: {
             inlineMath: [['\\(', '\\)']]
           }
         };
-    </script>
+    </script> -->
+    
+    <!-- PERUBAHAN: Script ASCIIMATH BARU -->
+    <!-- Ini akan otomatis mencari dan merender rumus saat halaman dimuat -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/asciimath-js/3.3.0/asciimath.js" async></script>
     
     <style>
         /* Menggunakan font Inter sebagai default */
@@ -1276,20 +1279,17 @@
                 }
             }
             
-            // Panggil MathJax untuk merender semua teks baru
-            // PERBAIKAN BUG: Kembalikan Promise agar transisi bisa menunggu
-            if (window.MathJax) {
-                return MathJax.typesetPromise([passageContainer, questionArea, optionsContainer])
-                    .catch((err) => console.log('MathJax error:', err))
-                    .finally(() => {
-                        // PERBAIKAN BUG FADE-IN: Dihapus dari sini, dipindah ke 'caller' (nextBtn/prevBtn)
-                        // questionArea.classList.remove('opacity-0');
-                    });
-            } else {
-                // Fallback jika MathJax gagal
-                // questionArea.classList.remove('opacity-0');
-                return Promise.resolve(); // Kembalikan promise kosong
-            }
+            // PERUBAHAN: HAPUS SEMUA PANGGILAN MATHJAX
+            // if (window.MathJax) {
+            //     return MathJax.typesetPromise([passageContainer, questionArea, optionsContainer])
+            //         .catch((err) => console.log('MathJax error:', err))
+            //         .finally(() => {
+            //         });
+            // } else {
+            //     return Promise.resolve();
+            // }
+            // Kembalikan promise kosong agar transisi fade-in tetap jalan
+            return Promise.resolve();
         }
         
         /* PERUBAHAN: handleAnswer (Mode Kuis) */
@@ -1345,10 +1345,10 @@
             
             updateQuestionPanelState();
             
-            // Panggil MathJax untuk merender penjelasan
-            if (window.MathJax) {
-                MathJax.typesetPromise([explanationBox]).catch((err) => console.log('MathJax error:', err));
-            }
+            // PERUBAHAN: HAPUS PANGGILAN MATHJAX
+            // if (window.MathJax) {
+            //     MathJax.typesetPromise([explanationBox]).catch((err) => console.log('MathJax error:', err));
+            // }
         }
         
         /* PERBAIKAN LOGIKA TOMBOL NAVIGASI */
