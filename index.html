@@ -259,7 +259,6 @@
         }
 
         /* Style ikon Musik (Volume) (TETAP DENGAN ANIMASI) */
-        /* #music-toggle-btn-floating > svg { ... } (Dihapus karena sudah digabung di .floating-icon-btn > svg) */
         
         #music-icon-unmuted { /* Gelombang */
             opacity: 0;
@@ -1608,180 +1607,44 @@
             // Atur volume berdasarkan di mana dia berada (Hanya jika di-unmute)
             if (!newMuteState && quizContainer.classList.contains('hidden')) {
                  setMusicVolume(HIGH_VOLUME); // Menu/Skor
-            } else if (!newMDate().getTime();
-                const response = await fetch(`./data/subjects.json?v=${timestamp}`); 
-                // ==========================================================
-                
-                if (!response.ok) throw new Error('subjects.json tidak ditemukan.');
-                
-                allSubjects = await response.json();
-
-                if (allSubjects.length === 0) {
-                    throw new Error("Tidak ada pelajaran di subjects.json");
-                }
-
-                buildSubjectButtons(allSubjects); 
-                loadingSpinner.classList.add('hidden'); 
-                subjectButtonContainer.classList.remove('hidden'); 
-                startBtn.classList.remove('hidden'); 
-
-            } catch (error) {
-                console.error("Error memuat daftar pelajaran:", error);
-                // *** PERBAIKAN PESAN ERROR: Memberi tahu user tentang folder /data/ ***
-                loadingSpinner.innerHTML = `
-                    <strong class="text-red-600">Error: Gagal Memuat Daftar Pelajaran</strong>
-                    <p class="mt-2 text-sm text-slate-600">
-                        Pastikan file <strong>subjects.json</strong> ada di dalam folder <strong>/data/</strong>.
-                    </p>`;
-            }
-        }
-
-
-        // --- LOGIKA TEMA ---
-        function applyTheme(theme) { // Parameter isAuto dihapus
-            if (theme === 'dark') {
-                document.body.classList.add('dark');
-                // localStorage.setItem('theme', 'dark'); // Dihapus, di-handle oleh listener
-                // PERUBAHAN: Logika 'hidden' dipindah ke CSS
-            } else {
-                document.body.classList.remove('dark');
-                // localStorage.setItem('theme', 'light'); // Dihapus, di-handle oleh listener
-                // PERUBAHAN: Logika 'hidden' dipindah ke CSS
-            }
-            themeToggleButtonFloating.classList.toggle('active', theme === 'light');
-            
-            // Logika tombol Auto dihapus
-            
-            initParticles(); // Re-initialize particles to update color for dark mode
-        }
-
-        /* PERUBAHAN: Fungsi loadTheme sekarang mendeteksi pengaturan device */
-        function loadTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            
-            if (savedTheme) {
-                // 1. Prioritas utama: Pilihan manual pengguna (dari klik tombol)
-                applyTheme(savedTheme); // isAuto dihapus
-            } else if (window.matchMedia) {
-                // 2. Prioritas kedua: Deteksi pengaturan device
-                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-                
-                // Terapkan tema yang terdeteksi saat ini
-                applyTheme(mediaQuery.matches ? 'dark' : 'light'); // isAuto dihapus
-                
-                // Tambahkan listener untuk mendeteksi perubahan di device
-                mediaQuery.addEventListener('change', (e) => {
-                    // Cek lagi, JIKA pengguna MASIH BELUM memilih manual,
-                    // maka ikuti perubahan device.
-                    if (!localStorage.getItem('theme')) {
-                        applyTheme(e.matches ? 'dark' : 'light'); // isAuto dihapus
-                    }
-                });
-            } else {
-                // 3. Fallback: Default ke mode terang jika media query tidak didukung
-                applyTheme('light'); // isAuto dihapus
-            }
-        }
-
-        /**
-         * Handler one-time untuk memastikan Tone.js aktif pada interaksi pertama.
-         */
-        async function firstInteractionHandler() {
-            // Hapus listener global setelah dipanggil
-            document.body.removeEventListener('click', firstInteractionHandler);
-            document.body.removeEventListener('touchstart', firstInteractionHandler);
-
-            // Kita hanya perlu inisialisasi Tone.js/SFX di sini.
-            if (!audioInitialized) {
-                await initAudio(); 
-                bgMusic.play().catch(e => console.warn("Play on tap failed:", e)); 
-            }
-        }
-
-
-        // --- TITIK MULAI APLIKASI ---
-        window.addEventListener('load', () => {
-            loadTheme(); // Muat tema tersimpan
-            resizeCanvas();
-            initParticles();
-            animateCanvas();
-            window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
-            loadSubjects();
-            
-            // Coba mainkan musik (muted) saat load
-            bgMusic.play().catch(e => console.warn("Autoplay (muted) gagal.", e));
-            
-            // Set ikon status musik awal (muted)
-            updateMusicState(isUserMuted);
-
-            // Tambahkan event listener untuk interaksi pertama di body
-            // Interaksi pertama akan membuat Tone.js siap dan musik play (muted)
-            document.body.addEventListener('click', firstInteractionHandler);
-            document.body.removeEventListener('touchstart', firstInteractionHandler);
-        });
-
-        // Event Listener Tombol Menu
-        startBtn.addEventListener('click', async () => {
-            // Cukup panggil initAudio agar SFX siap, tidak perlu logika unmute di sini.
-            await initAudio(); 
-            if (selectedSubjectId) {
-                startQuiz(selectedSubjectId);
-            } else {
-                alert("Silakan pilih mata pelajaran terlebih dahulu.");
+            } else if (!newMuteState && !quizContainer.classList.contains('hidden')) {
+                 setMusicVolume(LOW_VOLUME); // Kuis
             }
         });
 
-        // Event Listener Kuis
-        nextBtn.addEventListener('click', () => {
-            popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now()); // PERBAIKAN: SFX ditambahkan (Tinggi)
-            questionArea.classList.add('opacity-0'); // 1. Fade out soal
-            setTimeout(() => {
-                currentQuestionIndex++;
-                // 2. Muat soal, TUNGGU MathJax, 3. Fade in
-                loadQuestion().then(() => { 
-                    setTimeout(() => questionArea.classList.remove('opacity-0'), 10);
-                });
-            }, 300); // 4. Tunggu fade out selesai
+        // Toggle Tema Floating (MANUAL)
+        themeToggleButtonFloating.addEventListener('click', () => {
+            const currentTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            // Saat user klik, ini dihitung sebagai pilihan manual
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme); // isAuto dihapus
         });
         
-        prevBtn.addEventListener('click', () => {
-            popSfxLow.triggerAttackRelease('C5', '16n', Tone.now()); // PERBAIKAN: SFX ditambahkan (Rendah)
-            questionArea.classList.add('opacity-0'); // 1. Fade out soal
-            setTimeout(() => {
-                if (currentQuestionIndex > 0) {
-                    currentQuestionIndex--;
-                    // 2. Muat soal, TUNGGU MathJax, 3. Fade in
-                    loadQuestion().then(() => {
-                        setTimeout(() => questionArea.classList.remove('opacity-0'), 10);
-                    });
-                } else {
-                    questionArea.classList.remove('opacity-0'); // Batal fade out jika di soal pertama
-                }
-            }, 300); // 4. Tunggu fade out selesai
+        // BARU: Tombol Auto-Tema (DIHAPUS)
+        /*
+        themeAutoBtn.addEventListener('click', () => {
+             localStorage.removeItem('theme'); // Hapus override manual
+             loadTheme(); // Muat ulang tema (akan mendeteksi device)
         });
+        */
+
+
+        // Event Listener Modal Navigasi (tetap)
+        openNavBtn.addEventListener('click', openNavModal);
+        closeNavBtn.addEventListener('click', () => closeNavModal(true));
+        modalBackdropNav.addEventListener('click', () => closeNavModal(true));
         
-        finishBtn.addEventListener('click', openFinishModal); // Tombol Selesai BARU
-        reviewBackBtn.addEventListener('click', showScore); // BARU: Tombol Kembali Review (langsung ke skor)
-        
-        backToMenuQuizBtn.addEventListener('click', goToMenu);
+        // Event Listener Modal Selesai (BARU)
+        cancelFinishBtn.addEventListener('click', () => closeFinishModal(true));
+        modalBackdropFinish.addEventListener('click', () => closeFinishModal(true));
+        confirmFinishBtn.addEventListener('click', () => {
+            popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now());
+            // Tutup modal dulu (tanpa suara), baru tampilkan skor
+            closeFinishModal(false); 
+            showScore();
+        });
 
-        // Event Listener Skor
-        reviewBtn.addEventListener('click', startReview); 
-        resetBtn.addEventListener('click', restartQuiz);
-        backToMenuScoreBtn.addEventListener('click', goToMenu); 
-
-        // --- EVENT LISTENER PENGATURAN FLOATING ---
-
-        // Toggle Musik Floating
-        musicToggleButtonFloating.addEventListener('click', async () => {
-             // Pastikan Tone.js sudah diinisialisasi (misal, saat klik tombol Volume ini)
-            await initAudio(); 
-            
-            // Toggle state-nya
-            const newMuteState = !isUserMuted;
-            updateMusicState(newMuteState);
-            
-            // Atur volume berdasarkan di mana dia berada (Hanya jika di-unmute)
-            if (!newMuteState && quizContainer.classList.contains('hidden')) {
-                 setMusicVolume(HIGH_VOLUME); // Menu/Skor
-            } else if (!newMt
+    </script>
+</body>
+</html>
