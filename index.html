@@ -5,15 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aplikasi Kuis Interaktif</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Menambahkan font Montserrat (Bold 700) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     
-    <!-- Script untuk merender rumus Matematika (MathJax) -->
-    <!-- DIHAPUS: polyfill.min.js menyebabkan error 'ERR_NAME_NOT_RESOLVED' dan tidak wajib untuk MathJax 3 -->
-    <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <!-- Konfigurasi MathJax agar mengenali \(...\) -->
     <script>
         MathJax = {
           tex: {
@@ -556,67 +551,45 @@
     
     <canvas id="bg-canvas"></canvas>
 
-    <!-- ELEMEN AUDIO MP3 -->
     <audio id="bg-music" src="./assets/musikku.mp3" loop muted></audio>
 
-    <!-- FLOATING CONTROLS (SELALU TERLIHAT) -->
     <div id="floating-controls">
         
-        <!-- 1. Auto-Tema (DIHAPUS) -->
-        <!-- <button id="theme-auto-btn" ...> ... </button> -->
-
-        <!-- 2. Pilihan Tema (Toggle) -->
         <button id="theme-toggle-btn-floating" class="floating-icon-btn">
-            <!-- Icon Sun (Default) -->
             <svg id="theme-sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-            <!-- Icon Moon (PERUBAHAN: class hidden dihapus) -->
             <svg id="theme-moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
         </button>
 
-        <!-- 2. Musik Latar (PERUBAHAN: Konten diubah) -->
         <button id="music-toggle-btn-floating" class="floating-icon-btn is-muted">
-            <!-- Ikon Unmuted (Gelombang) BARU -->
             <svg id="music-icon-unmuted" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-            <!-- Ikon Muted (Silang) BARU -->
             <svg id="music-icon-muted" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg>
         </button>
     </div>
-    <!-- END FLOATING CONTROLS -->
-
-
-    <!-- PERBAIKAN: Padding diubah (p-4 sm:p-6) -->
     <div class="main-container bg-white p-4 sm:p-6 rounded-xl shadow-2xl">
 
-        <!-- 1. Kontainer Menu (Mulai visible) -->
         <div id="menu-container" class="opacity-100">
             <h1 class="text-3xl font-bold text-center text-slate-800 mb-6">Aplikasi Kuis</h1>
             
             <h2 class="text-lg font-semibold text-slate-700 mb-3">Pilih Mata Pelajaran:</h2>
             
-            <!-- Spinner Pemuatan -->
             <div id="loading-spinner" class="flex flex-col items-center justify-center my-6">
                 <svg class="w-8 h-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
                 <p class="mt-2 text-sm text-slate-600">Memuat daftar pelajaran...</p>
             </div>
             
-            <!-- Tombol subjek dinamis -->
             <div id="subject-button-container" class="flex flex-col gap-3 mb-6 hidden">
-                <!-- Tombol akan di-generate oleh JavaScript -->
-            </div>
+                </div>
 
             <button id="start-btn" class="w-full bg-green-600 text-white px-6 py-4 rounded-lg font-bold text-lg hover:bg-green-700 transition-all hidden">
                 Mulai Kuis
             </button>
         </div>
         
-        <!-- 2. Kontainer Kuis (Mulai invisible dan hidden) -->
         <div id="quiz-container" class="opacity-0 hidden">
-            <!-- Header (Judul & Kembali) -->
             <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
                 <h1 id="quiz-title" class="text-xl font-bold text-slate-800">Kuis</h1>
                 <div class="flex items-center gap-3">
                     <div id="timer-display" class="text-lg font-semibold text-red-600 bg-red-100 px-3 py-1 rounded-md">80:00</div>
-                    <!-- PERUBAHAN: Tombol Daftar Soal hilang di desktop (lg:hidden) -->
                     <button id="open-nav-btn" class="text-sm text-white bg-blue-600 px-3 py-1 rounded-md hover:bg-blue-700 font-medium transition-all lg:hidden">
                         Daftar Soal
                     </button>
@@ -626,49 +599,40 @@
                 </div>
             </div>
 
-            <!-- PERUBAHAN: Layout 2 Kolom di Desktop -->
             <div class="lg:flex lg:gap-6">
                 
-                <!-- Kolom Kiri (Soal) -->
                 <div id="quiz-content" class="w-full lg:w-7/12">
                     
-                    <!-- WACANA / TEKS SOAL -->
                     <div id="passage-container" class="mb-5 p-4 bg-gray-50 border rounded-lg max-h-48 overflow-y-auto hidden">
                         <h4 id="passage-title" class="font-bold text-sm text-gray-700 mb-2"></h4>
                         <div id="passage-content" class="text-sm text-gray-800 leading-relaxed"></div>
                     </div>
 
-                    <!-- Spinner saat soal dimuat -->
                     <div id="question-loading-spinner" class="hidden flex-col items-center justify-center my-6">
                         <svg class="w-8 h-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
                         <p class="mt-2 text-sm text-slate-600">Memuat soal...</p>
                     </div>
 
-                    <div id="question-area" class="opacity-0"> <!-- Mulai transisi fade di sini -->
-                        <div id="question-counter" class="text-sm font-medium text-slate-600 bg-slate-200 px-3 py-1 rounded-full w-fit mb-4"></div>
+                    <div id="question-area" class="opacity-0"> <div id="question-counter" class="text-sm font-medium text-slate-600 bg-slate-200 px-3 py-1 rounded-full w-fit mb-4"></div>
                         <div class="mb-5">
                             <p id="question-text" class="text-lg font-semibold text-slate-900 leading-relaxed"></p>
                         </div>
                         <div id="options-container" class="flex flex-col gap-3"></div>
                     </div>
 
-                    <!-- Box Penjelasan -->
                     <div id="explanation-box" class="hidden mt-4 p-4 rounded-lg border">
                         <p id="explanation-text" class="text-sm mt-1"></p>
                     </div>
 
-                    <!-- Tombol Navigasi B/S (Layout BARU - Mobile First) -->
                     <div class="flex flex-col sm:flex-row sm:justify-between items-center mt-6 gap-2">
                         <button id="prev-btn" class="bg-slate-300 text-slate-700 px-5 py-2 rounded-lg font-medium hover:bg-slate-400 transition-all disabled:opacity-50 w-full sm:w-auto">
                             Sebelumnya
                         </button>
                         
-                        <!-- Tombol Selesai (di tengah, order-first di mobile) -->
                         <button id="finish-btn" class="bg-green-600 text-white px-5 py-3 sm:py-2 rounded-lg font-bold hover:bg-green-700 transition-all w-full sm:w-auto order-first sm:order-none text-lg sm:text-base">
                             Selesai
                         </button>
                         
-                        <!-- BARU: Tombol Kembali dari Mode Review (Merah) -->
                         <button id="review-back-btn" class="hidden bg-red-500 text-white px-5 py-3 sm:py-2 rounded-lg font-bold hover:bg-red-600 transition-all w-full sm:w-auto order-first sm:order-none text-lg sm:text-base">
                             Kembali ke Menu Skor
                         </button>
@@ -679,26 +643,20 @@
                     </div>
                 </div>
 
-                <!-- Kolom Kanan (Navigasi Desktop) BARU -->
                 <div id="desktop-nav-container" class="hidden lg:block lg:w-5/12">
                     <h3 class="text-lg font-semibold text-slate-700 mb-4 dark:text-gray-200">Daftar Soal</h3>
-                    <!-- Panel navigasi khusus desktop -->
                     <div id="desktop-nav-panel">
-                        <!-- Nomor-nomor akan di-inject di sini oleh JS -->
-                    </div>
+                        </div>
                 </div>
 
-            </div> <!-- End 2 Kolom -->
-        </div>
+            </div> </div>
 
-        <!-- 3. Kontainer Skor (Mulai invisible dan hidden) -->
         <div id="score-container" class="opacity-0 hidden text-center">
             <h2 class="text-2xl font-bold text-slate-800 mb-4">Kuis Selesai!</h2>
             <p class="text-xl text-slate-700 mb-2">Skor Anda:</p>
             <p id="score-text" class="text-5xl font-bold text-blue-600 mb-6"></p>
             
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <!-- PERUBAHAN: Tombol 'Lihat Pembahasan' diubah jadi ungu (purple) -->
                 <button id="review-btn" class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-all text-lg">
                     Lihat Pembahasan
                 </button>
@@ -713,30 +671,23 @@
 
     </div>
 
-    <!-- 4. Modal Navigasi Soal (Tersembunyi) -->
     <div id="modal-backdrop-nav" class="modal-backdrop hidden opacity-0"></div>
-    <!-- PERBAIKAN: Padding diubah (p-4 sm:p-6) -->
     <div id="modal-container-nav" class="modal-container bg-white rounded-xl shadow-2xl p-4 sm:p-6 hidden opacity-0">
         <div class="flex justify-between items-center mb-4">
             <h3 id="modal-nav-title" class="text-lg font-semibold text-slate-700">Daftar Soal</h3>
-            <!-- PERBAIKAN: Tombol (X) diubah menjadi balok merah muda/merah tua -->
             <button id="close-nav-btn" class="p-1.5 rounded-md text-red-600 bg-red-100 hover:bg-red-200 dark:bg-red-800 dark:text-red-300 dark:hover:bg-red-700 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>
         </div>
         <div id="quiz-nav-panel">
-            <!-- Nomor-nomor akan di-inject di sini -->
-        </div>
+            </div>
     </div>
     
-    <!-- 5. Modal Konfirmasi Selesai (BARU) -->
     <div id="modal-backdrop-finish" class="modal-backdrop hidden opacity-0"></div>
-    <!-- PERBAIKAN: Padding diubah (p-4 sm:p-6) -->
     <div id="modal-container-finish" class="modal-container bg-white rounded-xl shadow-2xl p-4 sm:p-6 hidden opacity-0">
         <h3 class="text-xl font-bold text-slate-800 mb-4">Konfirmasi Selesai</h3>
         <p class="text-slate-700 mb-6">Anda yakin sudah mengerjakan semua soal dan mengeceknya?</p>
         <div class="flex justify-end gap-3">
-            <!-- PERUBAHAN: Class diubah dari bg-slate-300 menjadi bg-red-500 (merah) -->
             <button id="cancel-finish-btn" class="bg-red-500 text-white px-5 py-2 rounded-lg font-medium hover:bg-red-600 transition-all">
                 Eh, gajadi
             </button>
@@ -981,6 +932,7 @@
                     if (quizzesCache.has(subjectId)) {
                         flatQuestions = quizzesCache.get(subjectId);
                     } else {
+                        // Path sudah benar: './data/subjek.json'
                         const response = await fetch(`./data/${subjectId}.json`);
                         if (!response.ok) throw new Error(`File data/${subjectId}.json tidak ditemukan.`);
                         const fetchedData = await response.json();
@@ -1023,7 +975,12 @@
 
                 } catch (error) {
                     console.error("Gagal memuat kuis:", error);
-                    alert("Gagal memuat data kuis. Pastikan file .json ada di folder /data/.");
+                    // *** PERBAIKAN ERROR MESSAGE: Lebih spesifik dan kasih tahu letak file ***
+                    let errorMessage = `Gagal memuat data kuis. Cek file JSON: ${subjectId}.json`;
+                    if (error.message.includes('404')) {
+                         errorMessage += `\n\nError 404 (File Not Found). Pastikan file "${subjectId}.json" ada di dalam folder "/data/" di GitHub Anda.`;
+                    }
+                    alert(errorMessage);
                     goToMenu();
                 }
             }, 300); 
@@ -1412,7 +1369,8 @@
         }
         async function loadSubjects() {
             try {
-                const response = await fetch('./subjects.json'); 
+                // *** PERBAIKAN PATH KRITIS (1/2): subjects.json sekarang diambil dari folder /data/ ***
+                const response = await fetch('./data/subjects.json'); 
                 if (!response.ok) throw new Error('subjects.json tidak ditemukan.');
                 
                 allSubjects = await response.json();
@@ -1428,10 +1386,11 @@
 
             } catch (error) {
                 console.error("Error memuat daftar pelajaran:", error);
+                // *** PERBAIKAN PESAN ERROR: Memberi tahu user tentang folder /data/ ***
                 loadingSpinner.innerHTML = `
                     <strong class="text-red-600">Error: Gagal Memuat Daftar Pelajaran</strong>
                     <p class="mt-2 text-sm text-slate-600">
-                        Pastikan file <strong>subjects.json</strong> ada di folder yang sama dengan file HTML ini.
+                        Pastikan file <strong>subjects.json</strong> ada di dalam folder <strong>/data/</strong>.
                     </p>`;
             }
         }
