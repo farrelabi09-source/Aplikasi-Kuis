@@ -28,12 +28,12 @@
         "title": "Kuis UAS Sejarah"
     },
     {
-        "id": "Sosiologi",
-        "title": "Kuis UAS Sosiologi"
-    },
-    {
         "id": "BahasaIndonesia",
         "title": "Kuis UAS Bahasa Indonesia"
+    },
+    {
+        "id": "Sosiologi",
+        "title": "Kuis UAS Sosiologi"
     },
     {
         "id": "SeniBudaya",
