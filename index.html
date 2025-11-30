@@ -1366,6 +1366,11 @@
                 finishBtn.classList.add('hidden'); // 1. Sembunyikan tombol "Selesai" (Hijau)
                 reviewBackBtn.classList.remove('hidden'); // 2. Tampilkan "Kembali ke Menu Skor" (Merah)
                 
+                // ==========================================================
+                // *** PERMINTAAN KAMU: Hilangkan tombol "Kembali ke Menu" di atas ***
+                backToMenuQuizBtn.classList.add('hidden');
+                // ==========================================================
+                
                 if (currentQuestionIndex === activeQuizData.length - 1) {
                     // Soal terakhir di mode review
                     nextBtn.classList.add('hidden'); // Sembunyikan "Berikutnya"
@@ -1379,6 +1384,12 @@
                 // --- MODE KUIS NORMAL ---
                 finishBtn.classList.remove('hidden'); // Tampilkan "Selesai"
                 reviewBackBtn.classList.add('hidden'); // Sembunyikan "Kembali ke Menu Skor"
+                
+                // ==========================================================
+                // *** PERMINTAAN KAMU: Tampilkan lagi tombol "Kembali ke Menu" di atas ***
+                backToMenuQuizBtn.classList.remove('hidden');
+                // ==========================================================
+                
                 nextBtn.classList.remove('hidden'); // Tampilkan "Berikutnya"
                 
                 nextBtn.disabled = (currentQuestionIndex === activeQuizData.length - 1);
