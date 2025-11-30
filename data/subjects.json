@@ -1,34 +1,35 @@
 [
     {
         "id": "Ekonomi",
-        "title": "Kuis PAS Ekonomi"
+        "title": "Kuis UAS Ekonomi"
     },
     {
         "id": "Kimia",
-        "title": "Kuis PAS Kimia"
+        "title": "Kuis UAS Kimia"
     },
     {
         "id": "BahasaInggris",
-        "title": "Kuis PAS Bahasa Inggris"
+        "title": "Kuis UAS Bahasa Inggris"
     },
     {
         "id": "Matematika",
-        "title": "Kuis PAS Matematika"
+        "title": "Kuis UAS Matematika"
     },
     {
         "id": "MuatanLokal",
-        "title": "Kuis PAS Muatan Lokal"
+        "title": "Kuis UAS Muatan Lokal"
     },
     {
         "id": "Geografi",
-        "title": "Kuis PAS Geografi"
+        "title": "Kuis UAS Geografi"
     },
     {
         "id": "Sejarah",
-        "title": "Kuis PAS Sejarah"
+        "title": "Kuis UAS Sejarah"
     },
     {
         "id": "SeniBudaya",
-        "title": "Kuis PAS Seni Budaya"
+        "title": "Kuis UAS Seni Budaya"
     }
 ]
+
