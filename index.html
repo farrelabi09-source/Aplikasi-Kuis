@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <!-- ========================================================== -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Kuis Interaktif</title>
+    <title>Kuis Kelas X Semester 1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Menambahkan font Montserrat (Bold 700) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
@@ -1420,11 +1420,14 @@
                 }
             });
 
-            const comingSoonBtn = document.createElement('button');
-            comingSoonBtn.textContent = 'Sejarah (Segera Hadir)';
-            comingSoonBtn.className = 'subject-btn w-full p-4 rounded-lg bg-slate-200 text-slate-500 font-medium text-lg cursor-not-allowed';
-            comingSoonBtn.disabled = true;
-            subjectButtonContainer.appendChild(comingSoonBtn);
+            // ==========================================================
+            // *** PERBAIKAN: Tombol "Segera Hadir" Dihapus ***
+            // ==========================================================
+            // const comingSoonBtn = document.createElement('button');
+            // comingSoonBtn.textContent = 'Sejarah (Segera Hadir)';
+            // comingSoonBtn.className = 'subject-btn w-full p-4 rounded-lg bg-slate-200 text-slate-500 font-medium text-lg cursor-not-allowed';
+            // comingSoonBtn.disabled = true;
+            // subjectButtonContainer.appendChild(comingSoonBtn);
         }
         async function loadSubjects() {
             try {
