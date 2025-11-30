@@ -28,8 +28,11 @@
         "title": "Kuis UAS Sejarah"
     },
     {
+        "id": "Sosiologi",
+        "title": "Kuis UAS Sosiologi"
+    },
+    {
         "id": "SeniBudaya",
         "title": "Kuis UAS Seni Budaya"
     }
 ]
-
