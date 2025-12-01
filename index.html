@@ -183,12 +183,14 @@
         .interactive-btn {
             transition: all 0.2s ease-out;
             border: none; /* Hilangkan border default jika ada */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            /* PERBAIKAN: Shadow lebih kuat untuk "Depth" */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
         .interactive-btn:hover {
             transform: translateY(-2px); /* Efek 'lift' */
             filter: brightness(1.1);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            /* PERBAIKAN: Shadow lebih kuat untuk "Depth" */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
         }
         .interactive-btn:active {
             transform: scale(0.98) translateY(0px); /* Efek 'press' */
@@ -196,7 +198,7 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         body.dark .interactive-btn:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
         /* --- EFEK BARU: GRADIENT UNTUK TOMBOL (LEBIH JELAS) --- */
@@ -244,34 +246,39 @@
         
         /* --- AKHIR EFEK BARU --- */
 
+        /* ========================================================== */
+        /* --- PERBAIKAN: Tombol Pilihan Ganda (Glassmorphism) --- */
+        /* ========================================================== */
         .option-btn {
             transition: all 0.2s ease-out; /* DIPERBARUI: Transisi untuk hover */
-            background-color: #f1f5f9; /* bg-slate-100 */
-            border: 1px solid #e2e8f0; /* bg-slate-200 */
+            background-color: rgba(255, 255, 255, 0.3); /* KACA */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.4); /* Border Kaca */
             border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Shadow "Depth" */
         }
         .option-btn:hover {
-            /* transform: translateX(4px); */ /* <-- DIHAPUS */
-            transform: scale(1.02); /* <-- DIGANTI INI */
-            background-color: #e2e8f0; /* bg-slate-200 */
-            border-color: #cbd5e1; /* bg-slate-300 */
+            transform: scale(1.02); /* Efek pop */
+            background-color: rgba(255, 255, 255, 0.5); /* Lebih cerah */
+            border-color: rgba(255, 255, 255, 0.6);
         }
         
         body.dark .option-btn {
-            background-color: #374151; /* gray-700 */
-            border-color: #4b5563; /* gray-600 */
+            background-color: rgba(55, 65, 81, 0.3); /* KACA (Dark) */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Border Kaca (Dark) */
             color: #f3f4f6;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Shadow "Depth" (Dark) */
         }
         body.dark .option-btn:hover {
-            /* transform: translateX(4px); */ /* <-- DIHAPUS */
-            transform: scale(1.02); /* <-- DIGANTI INI */
-            background-color: #4b5563; /* gray-600 */
-            border-color: #6b7280; /* gray-500 */
+            transform: scale(1.02); /* Efek pop */
+            background-color: rgba(55, 65, 81, 0.5); /* Lebih cerah (Dark) */
+            border-color: rgba(255, 255, 255, 0.2);
         }
-        body.dark .q-nav-unanswered {
-            background-color: #374151;
-            color: #f3f4f6;
-        }
+        /* ========================================================== */
+
         body.dark .q-nav-unanswered:hover {
             background-color: #4b5563;
         }
@@ -350,23 +357,23 @@
             gap: 10px;
         }
         
-        /* Style untuk Tombol Floating (Icon Only) */
+        /* ========================================================== */
+        /* --- PERBAIKAN: Tombol Floating (Glassmorphism) --- */
+        /* ========================================================== */
         .floating-icon-btn {
-            background-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             padding: 10px;
             border-radius: 9999px; /* rounded-full */
-            border: 1px solid #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: all 300ms ease;
             cursor: pointer;
-            /* PERUBAHAN: Tambahkan ini untuk menampung ikon absolute */
             position: relative;
-            width: 42px; /* Set ukuran tetap */
+            width: 42px; 
             height: 42px;
         }
-        /* ========================================================== */
-        /* --- PERBAIKAN ANIMASI SCALE TOMBOL FLOATING --- */
-        /* ========================================================== */
         .floating-icon-btn:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
@@ -375,8 +382,10 @@
             transform: scale(0.95);
         }
         body.dark .floating-icon-btn {
-            background-color: #374151; /* dark mode background */
-            border-color: #4b5563;
+            background-color: rgba(55, 65, 81, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #f3f4f6;
         }
         body.dark .floating-icon-btn:hover {
@@ -455,8 +464,7 @@
             border-color: #2563eb; /* blue-600 */
             color: #1e3a8a; /* blue-900 */
             font-weight: 600;
-            /* transform: translateX(4px) scale(1.02); */ /* <-- DIUBAH */
-            transform: scale(1.02); /* <-- MENJADI INI */
+            transform: scale(1.02);
             box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
         }
         body.dark .selected-answer {
@@ -499,27 +507,37 @@
         }
 
 
-        /* Kelas untuk tombol mata pelajaran */
+        /* ========================================================== */
+        /* --- PERBAIKAN: Tombol Mata Pelajaran (Glassmorphism) --- */
+        /* ========================================================== */
         .subject-active {
             background-image: linear-gradient(to right, #0ea5e9, #3b82f6); /* GRADIENT BIRU */
             color: white;
             font-weight: 500;
         }
         .subject-inactive {
-            background-color: #e5e7eb; /* slate-200 */
+            background-color: rgba(229, 231, 235, 0.3); /* KACA */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             color: #374151; /* slate-700 */
             font-weight: 500;
         }
         body.dark .subject-inactive {
-             background-color: #374151; /* Darker slate in dark mode */
+             background-color: rgba(55, 65, 81, 0.3); /* KACA (Dark) */
+             backdrop-filter: blur(8px);
+             -webkit-backdrop-filter: blur(8px);
+             border: 1px solid rgba(255, 255, 255, 0.1);
              color: #f3f4f6;
         }
         body.dark .subject-inactive:hover {
-            background-color: #4b5563;
+            background-color: rgba(55, 65, 81, 0.5); /* Lebih cerah (Dark) */
         }
         .subject-inactive:hover {
-            background-color: #d1d5db; /* slate-300 */
+            background-color: rgba(229, 231, 235, 0.5); /* Lebih cerah */
         }
+        /* ========================================================== */
+
 
         /* Styling untuk Panel Navigasi Soal (PERUBAHAN FONT) */
         .q-nav-btn {
@@ -534,6 +552,7 @@
             font-size: 1.125rem; /* Diperbesar (text-lg) */
             font-weight: 700; /* Bold */
             transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* "Depth" */
         }
         /* ========================================================== */
         /* --- PERBAIKAN ANIMASI SCALE DAFTAR SOAL --- */
@@ -542,20 +561,28 @@
             transform: scale(0.95);
             filter: brightness(0.9);
         }
+        
+        /* PERBAIKAN: Tombol Daftar Soal (Glassmorphism) */
         .q-nav-unanswered {
-            background-color: #e2e8f0;
+            background-color: rgba(226, 232, 240, 0.3); /* KACA */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             color: #334155;
         }
         body.dark .q-nav-unanswered {
-            background-color: #374151;
+            background-color: rgba(55, 65, 81, 0.3); /* KACA (Dark) */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #f3f4f6;
         }
         .q-nav-unanswered:hover {
-            background-color: #cbd5e1;
+            background-color: rgba(203, 213, 225, 0.5);
             transform: translateY(-2px);
         }
         body.dark .q-nav-unanswered:hover {
-            background-color: #4b5563;
+            background-color: rgba(55, 65, 81, 0.5);
             transform: translateY(-2px);
         }
         
@@ -611,9 +638,10 @@
             grid-template-columns: repeat(6, minmax(0, 1fr));
             gap: 0.5rem; /* gap-2 */
             padding: 0.75rem; /* p-3 */
-            background-color: #f9fafb; /* bg-slate-50 */
+            /* Hapus background solid, biarkan transparan (karena modal-nya sudah glass) */
+            /* background-color: #f9fafb; */ 
             border-radius: 0.5rem; /* rounded-lg */
-            border-width: 1px;
+            /* border-width: 1px; */ /* Hapus border */
             max-height: 16rem; /* max-h-64 */
             overflow-y: auto;
         }
@@ -621,8 +649,8 @@
         /* PERBAIKAN: Latar Belakang Panel Navigasi Soal di Dark Mode */
         body.dark #quiz-nav-panel, 
         body.dark #desktop-nav-panel {
-            background-color: #1f2937; /* gray-800 */
-            border-color: #374151; /* gray-700 */
+            /* background-color: #1f2937; */ /* Hapus background solid */
+            /* border-color: #374151; */ /* Hapus border */
             /* BARU: Styling Scrollbar Firefox */
             scrollbar-color: #4b5563 #1f2937; /* thumb(gray-600) track(gray-800) */
             scrollbar-width: auto; /* PERBAIKAN: Diubah dari 'thin' ke 'auto' */
