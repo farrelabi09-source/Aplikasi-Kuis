@@ -40,17 +40,14 @@
         /* Canvas untuk latar belakang dinamis */
         #bg-canvas {
             position: fixed;
-             top: 0;
-             left: 0;
-             width: 100vw; /* Make it wide to simulate movement */
-             height: 100vh;
-             z-index: -1;
-             background-color:   ; 
-             transition: background-color 300ms;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
             /* Warna latar default (Terang) */
-             background: linear-gradient(100deg, #89CFF0 0%, #fecfef 100%);
-             animation: backgroundMove 10s linear infinite alternate;
-             
+            background-color: #89CFF0; 
+            transition: background-color 300ms;
         }
 
         /* Kontainer utama untuk di tengah layar */
@@ -157,7 +154,7 @@
             color: #f3f4f6; /* Default text color in dark mode */
         }
         body.dark #bg-canvas {
-            background-color: #111827; /* gray-900 */
+            background-color: #191970; /* gray-900 */
         }
         body.dark .main-container, body.dark .modal-container {
             /* --- EFEK BARU: GLASSMORPHISM (DARK) --- */
