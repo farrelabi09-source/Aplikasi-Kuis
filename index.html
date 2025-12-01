@@ -9,7 +9,8 @@
     <title>Kuis Kelas X Semester 1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Menambahkan font Montserrat (Bold 700) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <!-- PERUBAHAN FONT: Inter -> Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     
     <!-- PERUBAHAN: Script MATHJAX (Kembali) -->
@@ -26,7 +27,8 @@
     <style>
         /* Menggunakan font Inter sebagai default */
         body {
-            font-family: 'Inter', sans-serif;
+            /* PERUBAHAN FONT: Inter -> Poppins */
+            font-family: 'Poppins', sans-serif;
             overflow-x: hidden;
             transition: background-color 300ms; /* Transisi untuk Dark Mode */
         }
@@ -197,33 +199,33 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
         }
 
-        /* --- EFEK BARU: GRADIENT UNTUK TOMBOL --- */
+        /* --- EFEK BARU: GRADIENT UNTUK TOMBOL (LEBIH JELAS) --- */
         #start-btn, #finish-btn, #confirm-finish-btn {
-            background-image: linear-gradient(to right, #22c55e, #16a34a); /* GRADIENT HIJAU */
+            background-image: linear-gradient(to right, #34d399, #10b981); /* Emerald-400 ke Emerald-500 */
         }
         #start-btn:hover, #finish-btn:hover, #confirm-finish-btn:hover {
-            background-image: linear-gradient(to right, #22c55e, #15803d);
+            background-image: linear-gradient(to right, #059669, #0f766e); /* Emerald-600 ke Teal-700 */
         }
         
         #next-btn, #reset-btn {
-            background-image: linear-gradient(to right, #3b82f6, #2563eb); /* GRADIENT BIRU */
+            background-image: linear-gradient(to right, #0ea5e9, #3b82f6); /* Sky-500 ke Blue-500 */
         }
         #next-btn:hover, #reset-btn:hover {
-            background-image: linear-gradient(to right, #3b82f6, #1d4ed8);
+            background-image: linear-gradient(to right, #0284c7, #2563eb); /* Sky-600 ke Blue-600 */
         }
 
         #review-btn {
-            background-image: linear-gradient(to right, #a855f7, #9333ea); /* GRADIENT UNGU */
+            background-image: linear-gradient(to right, #d946ef, #a855f7); /* Fuchsia-500 ke Purple-500 */
         }
         #review-btn:hover {
-            background-image: linear-gradient(to right, #a855f7, #7e22ce);
+            background-image: linear-gradient(to right, #c026d3, #9333ea); /* Fuchsia-600 ke Purple-600 */
         }
         
         #review-back-btn, #cancel-finish-btn {
-            background-image: linear-gradient(to right, #ef4444, #dc2626); /* GRADIENT MERAH */
+            background-image: linear-gradient(to right, #f43f5e, #ef4444); /* Rose-500 ke Red-500 */
         }
         #review-back-btn:hover, #cancel-finish-btn:hover {
-            background-image: linear-gradient(to right, #ef4444, #b91c1c);
+            background-image: linear-gradient(to right, #e11d48, #dc2626); /* Rose-600 ke Red-600 */
         }
         
         #back-to-menu-score-btn {
@@ -303,11 +305,11 @@
         
         body.dark #next-btn {
              /* Warna BIRU tetap untuk tombol Next/Lihat Skor */
-             background-image: linear-gradient(to right, #3b82f6, #2563eb); /* BARU: GRADIENT */
+             background-image: linear-gradient(to right, #0ea5e9, #3b82f6); /* BARU: GRADIENT */
              color: white !important;
         }
         body.dark #next-btn:hover {
-            background-image: linear-gradient(to right, #3b82f6, #1d4ed8);
+            background-image: linear-gradient(to right, #0284c7, #2563eb);
         }
         
         /* Nonaktifkan tombol next/prev di dark mode */
@@ -482,7 +484,7 @@
 
         /* Kelas untuk tombol mata pelajaran */
         .subject-active {
-            background-image: linear-gradient(to right, #3b82f6, #2563eb); /* GRADIENT BIRU */
+            background-image: linear-gradient(to right, #0ea5e9, #3b82f6); /* GRADIENT BIRU */
             color: white;
             font-weight: 500;
         }
