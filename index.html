@@ -251,7 +251,8 @@
             border-radius: 0.75rem; /* rounded-xl */
         }
         .option-btn:hover {
-            transform: translateX(4px); /* BARU: Efek geser */
+            /* transform: translateX(4px); */ /* <-- DIHAPUS */
+            transform: scale(1.02); /* <-- DIGANTI INI */
             background-color: #e2e8f0; /* bg-slate-200 */
             border-color: #cbd5e1; /* bg-slate-300 */
         }
@@ -262,7 +263,8 @@
             color: #f3f4f6;
         }
         body.dark .option-btn:hover {
-            transform: translateX(4px); /* BARU: Efek geser */
+            /* transform: translateX(4px); */ /* <-- DIHAPUS */
+            transform: scale(1.02); /* <-- DIGANTI INI */
             background-color: #4b5563; /* gray-600 */
             border-color: #6b7280; /* gray-500 */
         }
@@ -362,11 +364,25 @@
             width: 42px; /* Set ukuran tetap */
             height: 42px;
         }
+        /* ========================================================== */
+        /* --- PERBAIKAN ANIMASI SCALE TOMBOL FLOATING --- */
+        /* ========================================================== */
+        .floating-icon-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        .floating-icon-btn:active {
+            transform: scale(0.95);
+        }
         body.dark .floating-icon-btn {
             background-color: #374151; /* dark mode background */
             border-color: #4b5563;
             color: #f3f4f6;
         }
+        body.dark .floating-icon-btn:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        /* ========================================================== */
         
         /* --- PERUBAHAN ANIMASI IKON --- */
 
@@ -439,7 +455,8 @@
             border-color: #2563eb; /* blue-600 */
             color: #1e3a8a; /* blue-900 */
             font-weight: 600;
-            transform: translateX(4px) scale(1.02); /* BARU: Efek pop */
+            /* transform: translateX(4px) scale(1.02); */ /* <-- DIUBAH */
+            transform: scale(1.02); /* <-- MENJADI INI */
             box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
         }
         body.dark .selected-answer {
@@ -518,6 +535,13 @@
             font-weight: 700; /* Bold */
             transition: all 0.2s;
         }
+        /* ========================================================== */
+        /* --- PERBAIKAN ANIMASI SCALE DAFTAR SOAL --- */
+        /* ========================================================== */
+        .q-nav-btn:active {
+            transform: scale(0.95);
+            filter: brightness(0.9);
+        }
         .q-nav-unanswered {
             background-color: #e2e8f0;
             color: #334155;
@@ -528,9 +552,11 @@
         }
         .q-nav-unanswered:hover {
             background-color: #cbd5e1;
+            transform: translateY(-2px);
         }
         body.dark .q-nav-unanswered:hover {
             background-color: #4b5563;
+            transform: translateY(-2px);
         }
         
         /* BARU: Style untuk navigasi yang sudah dijawab (Mode Kuis) */
@@ -540,12 +566,14 @@
         }
         .q-nav-answered-quiz:hover {
             background-color: #3b82f6; /* blue-500 */
+            transform: translateY(-2px);
         }
         body.dark .q-nav-answered-quiz {
             background-color: #2563eb; /* blue-600 */
         }
         body.dark .q-nav-answered-quiz:hover {
             background-color: #1d4ed8; /* blue-700 */
+            transform: translateY(-2px);
         }
         
         .q-nav-answered { /* Mode Review: Benar */
@@ -554,6 +582,7 @@
         }
         .q-nav-answered:hover {
             background-color: #16a34a;
+            transform: translateY(-2px);
         }
         .q-nav-wrong-answered { /* Mode Review: Salah */
             background-color: #ef4444;
@@ -561,6 +590,7 @@
         }
         .q-nav-wrong-answered:hover {
             background-color: #dc2626;
+            transform: translateY(-2px);
         }
         
         /* PERUBAHAN: Tombol Aktif (Kuning) */
@@ -570,6 +600,10 @@
             outline: 2px solid #f59e0b; /* amber-500 */
             outline-offset: 2px;
         }
+        .q-nav-active:hover {
+            transform: translateY(0px); /* Jangan terangkat saat aktif */
+        }
+        /* ========================================================== */
 
         /* Panel Navigasi (Modal dan Desktop) */
         #quiz-nav-panel, #desktop-nav-panel {
