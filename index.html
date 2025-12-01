@@ -40,14 +40,17 @@
         /* Canvas untuk latar belakang dinamis */
         #bg-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
+             top: 0;
+             left: 0;
+             width: 100vw; /* Make it wide to simulate movement */
+             height: 100vh;
+             z-index: -1;
+             background-color:   ; 
+             transition: background-color 300ms;
             /* Warna latar default (Terang) */
-            background-color: #f1f5f9; 
-            transition: background-color 300ms;
+             background: linear-gradient(100deg, #89CFF0 0%, #fecfef 100%);
+             animation: backgroundMove 10s linear infinite alternate;
+             
         }
 
         /* Kontainer utama untuk di tengah layar */
@@ -61,6 +64,7 @@
             
             /* --- EFEK BARU: GLASSMORPHISM --- */
             background-color: rgba(255, 255, 255, 0.5);
+            opacity: 1;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -69,7 +73,14 @@
             border-radius: 1.5rem; /* rounded-2xl, lebih halus */
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: background-color 300ms;
-        }
+            }
+
+        /* 3. The key CSS property for the glass effect */
+        .main-container {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* For Safari browser compatibility */
+
+            }
 
         /* PERUBAHAN: Perbesar kontainer di Desktop (lg) untuk 2 kolom */
         @media (min-width: 1024px) {
