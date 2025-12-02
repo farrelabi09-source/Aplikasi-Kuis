@@ -46,7 +46,7 @@
             height: 100vh;
             z-index: -1;
             /* Warna latar default (Terang) */
-            background-color: #89CFF0; 
+            background-color: #87CEEB; 
             transition: background-color 300ms;
         }
 
@@ -62,24 +62,16 @@
             /* --- EFEK BARU: GLASSMORPHISM --- */
             background-color: rgba(255, 255, 255, 0.5);
             opacity: 1;
-            /* PERUBAHAN BLUR: 16px -> 10px */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            /* PERUBAHAN BLUR: 10px -> 6px */
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             /* --- AKHIR EFEK BARU --- */
 
             border-radius: 1.5rem; /* rounded-2xl, lebih halus */
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: background-color 300ms;
-            }
-
-        /* 3. The key CSS property for the glass effect */
-        .main-container {
-            /* PERUBAHAN BLUR: 16px -> 10px */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px); /* For Safari browser compatibility */
-
-            }
+        }
 
         /* PERUBAHAN: Perbesar kontainer di Desktop (lg) untuk 2 kolom */
         @media (min-width: 1024px) {
@@ -156,19 +148,19 @@
             color: #f3f4f6; /* Default text color in dark mode */
         }
         body.dark #bg-canvas {
-            background-color: #191970; /* gray-900 */
+            background-color: #396991; /* gray-900 */
         }
         body.dark .main-container, body.dark .modal-container {
             /* --- EFEK BARU: GLASSMORPHISM (DARK) --- */
             background-color: rgba(31, 41, 55, 0.5);
-            /* PERUBAHAN BLUR: 16px -> 10px */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            /* PERUBAHAN BLUR: 10px -> 6px */
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         /* Fallback untuk browser (Firefox) yang tidak support backdrop-filter */
-        @supports not (backdrop-filter: blur(10px)) { /* <-- DIUBAH: 16px -> 10px */
+        @supports not (backdrop-filter: blur(6px)) { /* <-- DIUBAH: 10px -> 6px */
             .main-container, .modal-container {
                 background-color: #ffffff;
             }
@@ -267,9 +259,9 @@
         .option-btn {
             transition: all 0.2s ease-out; /* DIPERBARUI: Transisi untuk hover */
             background-color: rgba(255, 255, 255, 0.3); /* KACA */
-            /* PERUBAHAN BLUR: 8px -> 5px */
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.4); /* Border Kaca */
             border-radius: 0.75rem; /* rounded-xl */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Shadow "Depth" */
@@ -282,9 +274,9 @@
         
         body.dark .option-btn {
             background-color: rgba(55, 65, 81, 0.3); /* KACA (Dark) */
-            /* PERUBAHAN BLUR: 8px -> 5px */
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.1); /* Border Kaca (Dark) */
             color: #f3f4f6;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Shadow "Depth" (Dark) */
@@ -379,9 +371,9 @@
         /* ========================================================== */
         .floating-icon-btn {
             background-color: rgba(255, 255, 255, 0.5);
-            /* PERUBAHAN BLUR: 8px -> 5px */
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             padding: 10px;
             border-radius: 9999px; /* rounded-full */
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -401,9 +393,9 @@
         }
         body.dark .floating-icon-btn {
             background-color: rgba(55, 65, 81, 0.5);
-            /* PERUBAHAN BLUR: 8px -> 5px */
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: #f3f4f6;
         }
@@ -536,18 +528,18 @@
         }
         .subject-inactive {
             background-color: rgba(229, 231, 235, 0.3); /* KACA */
-            /* PERUBAHAN BLUR: 8px -> 5px */
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.4);
             color: #374151; /* slate-700 */
             font-weight: 500;
         }
         body.dark .subject-inactive {
              background-color: rgba(55, 65, 81, 0.3); /* KACA (Dark) */
-            /* PERUBAHAN BLUR: 8px -> 5px */
-             backdrop-filter: blur(5px);
-             -webkit-backdrop-filter: blur(5px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+             backdrop-filter: blur(3px);
+             -webkit-backdrop-filter: blur(3px);
              border: 1px solid rgba(255, 255, 255, 0.1);
              color: #f3f4f6;
         }
@@ -586,17 +578,17 @@
         /* PERBAIKAN: Tombol Daftar Soal (Glassmorphism) */
         .q-nav-unanswered {
             background-color: rgba(226, 232, 240, 0.3); /* KACA */
-            /* PERUBAHAN BLUR: 8px -> 5px */
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.4);
             color: #334155;
         }
         body.dark .q-nav-unanswered {
             background-color: rgba(55, 65, 81, 0.3); /* KACA (Dark) */
-            /* PERUBAHAN BLUR: 8px -> 5px */
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: #f3f4f6;
         }
@@ -737,9 +729,9 @@
             width: 100vw;
             height: 100vh;
             background-color: rgba(0, 0, 0, 0.5); /* Latar redup */
-            /* PERUBAHAN BLUR: 16px -> 10px */
-            backdrop-filter: blur(10px); /* Efek blur DITINGKATKAN */
-            -webkit-backdrop-filter: blur(10px);
+            /* PERUBAHAN BLUR: 10px -> 6px */
+            backdrop-filter: blur(6px); /* Efek blur DITINGKATKAN */
+            -webkit-backdrop-filter: blur(6px);
             z-index: 40;
             /* opacity: 0; <-- DIHAPUS, dikontrol oleh class Tailwind */
             transition: opacity 300ms ease-in-out;
@@ -757,9 +749,9 @@
             transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
             pointer-events: none; /* Nonaktifkan klik saat transisi */
             background-color: rgba(255, 255, 255, 0.5);
-            /* PERUBAHAN BLUR: 16px -> 10px */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            /* PERUBAHAN BLUR: 10px -> 6px */
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 1.5rem; /* rounded-2xl */
         }
