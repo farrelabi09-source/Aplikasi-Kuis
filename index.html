@@ -1977,10 +1977,16 @@
                         cancelAnimationFrame(animationFrameId);
                         animationFrameId = null;
                     }
+                    // --- BARU: Jeda musik saat minimize ---
+                    bgMusic.pause();
                 } else {
                     // Page is visible - restart animation
                     if (!animationFrameId) {
                         animateCanvas();
+                    }
+                    // --- BARU: Lanjutkan musik saat kembali (jika tidak di-mute) ---
+                    if (!isUserMuted) {
+                        bgMusic.play().catch(e => console.warn("Autoplay on focus failed:", e));
                     }
                 }
             });
