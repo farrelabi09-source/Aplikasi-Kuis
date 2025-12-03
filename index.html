@@ -46,7 +46,7 @@
             height: 100vh;
             z-index: -1;
             /* Warna latar default (Terang) */
-            background-color: #89CFF0; 
+            background-color: #87CEEB; 
             transition: background-color 300ms;
         }
 
@@ -62,22 +62,16 @@
             /* --- EFEK BARU: GLASSMORPHISM --- */
             background-color: rgba(255, 255, 255, 0.5);
             opacity: 1;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            /* PERUBAHAN BLUR: 10px -> 6px */
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             /* --- AKHIR EFEK BARU --- */
 
             border-radius: 1.5rem; /* rounded-2xl, lebih halus */
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: background-color 300ms;
-            }
-
-        /* 3. The key CSS property for the glass effect */
-        .main-container {
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px); /* For Safari browser compatibility */
-
-            }
+        }
 
         /* PERUBAHAN: Perbesar kontainer di Desktop (lg) untuk 2 kolom */
         @media (min-width: 1024px) {
@@ -154,18 +148,19 @@
             color: #f3f4f6; /* Default text color in dark mode */
         }
         body.dark #bg-canvas {
-            background-color: #191970; /* gray-900 */
+            background-color: #396991; /* gray-900 */
         }
         body.dark .main-container, body.dark .modal-container {
             /* --- EFEK BARU: GLASSMORPHISM (DARK) --- */
             background-color: rgba(31, 41, 55, 0.5);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            /* PERUBAHAN BLUR: 10px -> 6px */
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         /* Fallback untuk browser (Firefox) yang tidak support backdrop-filter */
-        @supports not (backdrop-filter: blur(16px)) {
+        @supports not (backdrop-filter: blur(6px)) { /* <-- DIUBAH: 10px -> 6px */
             .main-container, .modal-container {
                 background-color: #ffffff;
             }
@@ -264,8 +259,9 @@
         .option-btn {
             transition: all 0.2s ease-out; /* DIPERBARUI: Transisi untuk hover */
             background-color: rgba(255, 255, 255, 0.3); /* KACA */
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.4); /* Border Kaca */
             border-radius: 0.75rem; /* rounded-xl */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Shadow "Depth" */
@@ -278,8 +274,9 @@
         
         body.dark .option-btn {
             background-color: rgba(55, 65, 81, 0.3); /* KACA (Dark) */
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.1); /* Border Kaca (Dark) */
             color: #f3f4f6;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Shadow "Depth" (Dark) */
@@ -374,8 +371,9 @@
         /* ========================================================== */
         .floating-icon-btn {
             background-color: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             padding: 10px;
             border-radius: 9999px; /* rounded-full */
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -395,8 +393,9 @@
         }
         body.dark .floating-icon-btn {
             background-color: rgba(55, 65, 81, 0.5);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: #f3f4f6;
         }
@@ -529,16 +528,18 @@
         }
         .subject-inactive {
             background-color: rgba(229, 231, 235, 0.3); /* KACA */
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.4);
             color: #374151; /* slate-700 */
             font-weight: 500;
         }
         body.dark .subject-inactive {
              background-color: rgba(55, 65, 81, 0.3); /* KACA (Dark) */
-             backdrop-filter: blur(8px);
-             -webkit-backdrop-filter: blur(8px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+             backdrop-filter: blur(3px);
+             -webkit-backdrop-filter: blur(3px);
              border: 1px solid rgba(255, 255, 255, 0.1);
              color: #f3f4f6;
         }
@@ -577,15 +578,17 @@
         /* PERBAIKAN: Tombol Daftar Soal (Glassmorphism) */
         .q-nav-unanswered {
             background-color: rgba(226, 232, 240, 0.3); /* KACA */
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.4);
             color: #334155;
         }
         body.dark .q-nav-unanswered {
             background-color: rgba(55, 65, 81, 0.3); /* KACA (Dark) */
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            /* PERUBAHAN BLUR: 5px -> 3px */
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: #f3f4f6;
         }
@@ -656,6 +659,8 @@
             /* border-width: 1px; */ /* Hapus border */
             max-height: 16rem; /* max-h-64 */
             overflow-y: auto;
+            /* BARU: Smooth Scroll */
+            scroll-behavior: smooth;
         }
 
         /* PERBAIKAN: Latar Belakang Panel Navigasi Soal di Dark Mode */
@@ -726,7 +731,9 @@
             width: 100vw;
             height: 100vh;
             background-color: rgba(0, 0, 0, 0.5); /* Latar redup */
-            backdrop-filter: blur(16px); /* Efek blur DITINGKATKAN */
+            /* PERUBAHAN BLUR: 10px -> 6px */
+            backdrop-filter: blur(6px); /* Efek blur DITINGKATKAN */
+            -webkit-backdrop-filter: blur(6px);
             z-index: 40;
             /* opacity: 0; <-- DIHAPUS, dikontrol oleh class Tailwind */
             transition: opacity 300ms ease-in-out;
@@ -744,8 +751,9 @@
             transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
             pointer-events: none; /* Nonaktifkan klik saat transisi */
             background-color: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            /* PERUBAHAN BLUR: 10px -> 6px */
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 1.5rem; /* rounded-2xl */
         }
@@ -1023,6 +1031,12 @@
         let audioInitialized = false;
         let isReviewMode = false; 
         let isUserMuted = true; // DEFAULT-NYA MUTE (sesuai permintaan)
+        
+        // ==========================================================
+        // --- PERUBAHAN: Variabel untuk Efisiensi & Penyimpanan ---
+        let animationFrameId = null;
+        const QUIZ_STATE_KEY = 'savedQuizState';
+        // ==========================================================
 
         const HIGH_VOLUME = 1.0; // Volume normal (Menu/Skor)
         const LOW_VOLUME = 0.7; // Volume rendah (Saat kuis) - Ditingkatkan ke 0.7
@@ -1163,7 +1177,20 @@
             draw() { ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rotation * Math.PI / 180); ctx.fillStyle = this.color; if (this.type === 'book') { ctx.fillRect(-this.size / 2, -this.size / 1.5 / 2, this.size, this.size / 1.5); ctx.fillStyle = "rgba(255, 255, 255, 0.5)"; ctx.fillRect(-this.size / 2, -this.size / 1.5 / 2, 3, this.size / 1.5); } else { ctx.fillRect(-this.size / 2, -this.size / 8 / 2, this.size, this.size / 8); ctx.beginPath(); ctx.moveTo(this.size / 2, -this.size / 8 / 2); ctx.lineTo(this.size / 2 + 5, 0); ctx.lineTo(this.size / 2, this.size / 8 / 2); ctx.fill(); } ctx.restore(); }
         }
         function initParticles() { particles = []; for (let i = 0; i < 40; i++) { particles.push(new Particle()); } }
-        function animateCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); for (let i = 0; i < particles.length; i++) { particles[i].update(); particles[i].draw(); } requestAnimationFrame(animateCanvas); }
+        
+        // ==========================================================
+        // --- PERUBAHAN: Logika Efisiensi Latar Belakang ---
+        // ==========================================================
+        function animateCanvas() { 
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            for (let i = 0; i < particles.length; i++) { 
+                particles[i].update(); 
+                particles[i].draw(); 
+            } 
+            animationFrameId = requestAnimationFrame(animateCanvas); // Simpan ID
+        }
+        // ==========================================================
+
 
         // --- FUNGSI MODAL (BARU DENGAN FADE) ---
         function openNavModal() { 
@@ -1209,12 +1236,39 @@
         }
 
         
+        // ==========================================================
+        // --- PERUBAHAN: Fungsi Penyimpanan State Kuis ---
+        // ==========================================================
+        function saveQuizState() {
+            // Jangan simpan jika sedang review atau kuis belum aktif
+            if (isReviewMode || !activeQuizData.length) return; 
+            const state = {
+                subjectId: selectedSubjectId,
+                answers: userAnswers,
+                index: currentQuestionIndex,
+                time: remainingTime
+            };
+            localStorage.setItem(QUIZ_STATE_KEY, JSON.stringify(state));
+        }
+
+        function clearQuizState() {
+            localStorage.removeItem(QUIZ_STATE_KEY);
+        }
+        // ==========================================================
+
+
         // --- FUNGSI TIMER ---
         function updateTimer() {
             remainingTime--;
             const minutes = Math.floor(remainingTime / 60);
             const seconds = remainingTime % 60;
             timerDisplay.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            
+            // Simpan progres setiap 5 detik
+            if (remainingTime % 5 === 0) {
+                saveQuizState();
+            }
+
             if (remainingTime <= 0) {
                 clearInterval(timerInterval);
                 alarmSfx.triggerAttackRelease('A5', '8n', Tone.now());
@@ -1248,12 +1302,18 @@
             }, 350); // Sesuaikan dengan durasi transisi di CSS
         }
         
-        async function startQuiz(subjectId) {
+        // ==========================================================
+        // --- PERUBAHAN: startQuiz sekarang bisa menerima savedState ---
+        // ==========================================================
+        async function startQuiz(subjectId, savedState = null) {
             isReviewMode = false; 
             await initAudio(); // Inisialisasi Tone.js/SFX
             popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now());
             
-            transitionScreen(menuContainer, quizContainer); // <-- BARU: Transisi
+            // Hanya lakukan transisi layar jika INI KUIS BARU (bukan restore)
+            if (!savedState) {
+                transitionScreen(menuContainer, quizContainer); // <-- BARU: Transisi
+            }
             setMusicVolume(LOW_VOLUME); // Volume turun saat kuis
 
             try {
@@ -1292,25 +1352,46 @@
                 const subject = allSubjects.find(s => s.id === subjectId);
                 quizTitle.textContent = subject.title;
 
-                currentQuestionIndex = 0;
-                score = 0;
-                userAnswers = new Array(activeQuizData.length).fill(null); 
+                // ==========================================================
+                // --- PERUBAHAN: Logika Restore State ---
+                // ==========================================================
+                if (savedState) {
+                    // Restore state from localStorage
+                    userAnswers = savedState.answers;
+                    currentQuestionIndex = savedState.index;
+                    remainingTime = savedState.time;
+                } else {
+                    // Start kuis baru
+                    currentQuestionIndex = 0;
+                    score = 0;
+                    userAnswers = new Array(activeQuizData.length).fill(null); 
+                    remainingTime = 80 * 60; 
+                }
+                // ==========================================================
                 
                 generateQuestionPanel(); 
-                remainingTime = 80 * 60; 
                 if (timerInterval) clearInterval(timerInterval);
                 timerInterval = setInterval(updateTimer, 1000);
                 updateTimer(); 
 
-                // Tampilkan spinner dulu
-                questionArea.classList.add('opacity-0'); 
-                questionLoadingSpinner.classList.remove('hidden'); 
+                // Tampilkan spinner dulu (hanya jika kuis baru, kalau restore lgsg aja)
+                if (!savedState) {
+                    questionArea.classList.add('opacity-0'); 
+                    questionLoadingSpinner.classList.remove('hidden'); 
+                }
 
                 // PERBAIKAN BUG FADE-IN: Tunggu loadQuestion (termasuk MathJax) selesai
                 loadQuestion().then(() => {
-                    questionLoadingSpinner.classList.add('hidden'); 
-                    questionArea.classList.remove('opacity-0'); // Fade in
-                    questionArea.style.transform = 'translateY(0px) scale(1)'; // Pastikan state-nya benar
+                    if (!savedState) {
+                        questionLoadingSpinner.classList.add('hidden'); 
+                        questionArea.classList.remove('opacity-0'); // Fade in
+                        questionArea.style.transform = 'translateY(0px) scale(1)'; // Pastikan state-nya benar
+                    } else {
+                        // Jika restore, langsung tampilkan tanpa spinner
+                        questionLoadingSpinner.classList.add('hidden');
+                        questionArea.classList.remove('opacity-0');
+                        questionArea.style.transform = 'translateY(0px) scale(1)';
+                    }
                 });
 
             } catch (error) {
@@ -1347,6 +1428,11 @@
             setMusicVolume(HIGH_VOLUME); // Volume naik ke normal
             if (timerInterval) clearInterval(timerInterval); 
             
+            // ==========================================================
+            // --- PERUBAHAN: Hapus state kuis saat kembali ke menu ---
+            clearQuizState();
+            // ==========================================================
+
             const activeContainer = !quizContainer.classList.contains('hidden') ? quizContainer : scoreContainer;
             
             transitionScreen(activeContainer, menuContainer); // <-- BARU: Transisi
@@ -1402,6 +1488,11 @@
             if (!isReviewMode) {
                 calculateScore();
             }
+
+            // ==========================================================
+            // --- PERUBAHAN: Hapus state kuis saat kuis selesai ---
+            clearQuizState();
+            // ==========================================================
             
             transitionScreen(quizContainer, scoreContainer); // <-- BARU: Transisi
             closeFinishModal(false); // Tutup modal konfirmasi jika terbuka
@@ -1495,6 +1586,10 @@
             questionArea.classList.add('opacity-0'); // Fade out soal
             setTimeout(() => {
                 currentQuestionIndex = index;
+                // ==========================================================
+                // --- PERUBAHAN: Simpan state saat ganti soal ---
+                saveQuizState();
+                // ==========================================================
                 // PERBAIKAN BUG: Tunggu loadQuestion (termasuk MathJax) selesai, baru fade in
                 loadQuestion().then(() => { 
                     setTimeout(() => questionArea.classList.remove('opacity-0'), 10); // Fade in
@@ -1600,6 +1695,11 @@
             buttons[selectedOptionIndex].classList.add('selected-answer'); // Tandai pilihan baru
             
             updateQuestionPanelState(); // Perbarui panel navigasi (jadi biru)
+
+            // ==========================================================
+            // --- PERUBAHAN: Simpan state saat menjawab ---
+            saveQuizState();
+            // ==========================================================
         }
         
         // --- FUNGSI SHOWFEEDBACK (DENGAN MATHJAX) ---
@@ -1726,6 +1826,9 @@
             // ==========================================================
         }
         
+        // ==========================================================
+        // --- PERUBAHAN: loadSubjects di-refactor untuk Cek State ---
+        // ==========================================================
         async function loadSubjects() {
             try {
                 // *** PERBAIKAN PATH KRITIS (1/2): subjects.json sekarang diambil dari folder /data/ ***
@@ -1743,16 +1846,34 @@
                     throw new Error("Tidak ada pelajaran di subjects.json");
                 }
 
+                // 1. Build tombol (selalu)
                 buildSubjectButtons(allSubjects); 
-                // BARU: Tunda pemunculan tombol agar animasi jalan
-                setTimeout(() => {
-                    loadingSpinner.classList.add('hidden'); 
-                    subjectButtonContainer.classList.remove('hidden'); 
-                    startBtn.classList.remove('hidden');
-                    // BARU: Animasikan tombol start juga
-                    startBtn.classList.add('reveal-item');
-                    startBtn.style.animationDelay = `${allSubjects.length * 50}ms`;
-                }, 100);
+
+                // 2. Cek state
+                const savedStateJSON = localStorage.getItem(QUIZ_STATE_KEY);
+                if (savedStateJSON) {
+                    const savedState = JSON.parse(savedStateJSON);
+                    console.log("Restoring previous quiz state...");
+                    selectedSubjectId = savedState.subjectId;
+                    
+                    // Sembunyikan menu, siapkan kuis
+                    menuContainer.classList.add('hidden', 'opacity-0');
+                    quizContainer.classList.remove('hidden', 'opacity-0'); 
+                    quizContainer.style.transform = 'translateY(0px) scale(1)';
+                    
+                    // Panggil startQuiz dengan state
+                    startQuiz(savedState.subjectId, savedState); 
+                } else {
+                    // Load menu normal (animasi staggered)
+                    setTimeout(() => {
+                        loadingSpinner.classList.add('hidden'); 
+                        subjectButtonContainer.classList.remove('hidden'); 
+                        startBtn.classList.remove('hidden');
+                        // BARU: Animasikan tombol start juga
+                        startBtn.classList.add('reveal-item');
+                        startBtn.style.animationDelay = `${allSubjects.length * 50}ms`;
+                    }, 100);
+                }
 
             } catch (error) {
                 console.error("Error memuat daftar pelajaran:", error);
@@ -1839,8 +1960,40 @@
             loadTheme(); // Muat tema tersimpan
             resizeCanvas();
             initParticles();
-            animateCanvas();
-            window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+            animateCanvas(); // <-- BARU: Mulai animasi
+            
+            // ==========================================================
+            // --- PERUBAHAN: Hapus initParticles() dari resize ---
+            // ==========================================================
+            window.addEventListener('resize', resizeCanvas); // <-- Hanya panggil resizeCanvas
+            
+            // ==========================================================
+            // --- PERUBAHAN: Logika Efisiensi (Page Visibility) ---
+            // ==========================================================
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    // Page is hidden - stop animation
+                    if (animationFrameId) {
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
+                    }
+                    // --- BARU: Jeda musik saat minimize ---
+                    bgMusic.pause();
+                } else {
+                    // Page is visible - restart animation
+                    if (!animationFrameId) {
+                        animateCanvas();
+                    }
+                    // --- BARU: Lanjutkan musik saat kembali (jika tidak di-mute) ---
+                    if (!isUserMuted) {
+                        bgMusic.play().catch(e => console.warn("Autoplay on focus failed:", e));
+                    }
+                }
+            });
+            
+            // ==========================================================
+            // --- PERUBAHAN: loadSubjects dipanggil di sini ---
+            // ==========================================================
             loadSubjects();
             
             // Coba mainkan musik (muted) saat load
@@ -1873,6 +2026,7 @@
             questionArea.style.transform = 'scale(0.97)';
             setTimeout(() => {
                 currentQuestionIndex++;
+                saveQuizState(); // <-- BARU: Simpan state
                 // 2. Muat soal, TUNGGU MathJax, 3. Fade in
                 loadQuestion().then(() => { 
                     setTimeout(() => {
@@ -1890,6 +2044,7 @@
             setTimeout(() => {
                 if (currentQuestionIndex > 0) {
                     currentQuestionIndex--;
+                    saveQuizState(); // <-- BARU: Simpan state
                     // 2. Muat soal, TUNGGU MathJax, 3. Fade in
                     loadQuestion().then(() => {
                         setTimeout(() => {
