@@ -4,142 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kuis Kelas X Semester 1</title>
+    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+    
+    <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>
         MathJax = {
-          tex: {
-            inlineMath: [['\\(', '\\)']]
-          }
+          tex: { inlineMath: [['\\(', '\\)']] }
         };
     </script>
     
     <style>
+        /* --- GAYA VISUAL UTAMA (AMBITIOUS STYLE) --- */
         body {
             font-family: 'Poppins', sans-serif;
             overflow-x: hidden;
             transition: background-color 300ms;
-            /* Optimasi rendering */
-            -webkit-font-smoothing: antialiased; 
+            -webkit-font-smoothing: antialiased;
         }
         
         #bg-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            background-color: #87CEEB; 
-            transition: background-color 300ms;
-            /* Optimasi GPU untuk canvas */
-            will-change: transform;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; background-color: #87CEEB; transition: background-color 300ms;
         }
 
+        /* KONTAINER UTAMA: EFEK KACA (GLASSMORPHISM) */
         .main-container {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 42rem;
-            margin-top: 4rem;
-            margin-bottom: 4rem;
-            
-            /* Glassmorphism */
-            background-color: rgba(255, 255, 255, 0.6); /* Opacity dinaikkan sedikit agar blur lebih ringan kerjanya */
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative; z-index: 10; width: 100%; max-width: 42rem;
+            margin-top: 4rem; margin-bottom: 4rem;
+            background-color: rgba(255, 255, 255, 0.5); /* Transparan Putih */
+            backdrop-filter: blur(10px); /* Blur Belakang */
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 1.5rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: background-color 300ms;
-            /* Optimasi: hindari repaint berlebih */
-            transform: translateZ(0); 
         }
 
-        @media (min-width: 1024px) {
-            .main-container { max-width: 64rem; }
-        }
-
+        @media (min-width: 1024px) { .main-container { max-width: 64rem; } }
         @media (min-width: 768px) {
-            body {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                min-height: 100vh;
-            }
+            body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
             .main-container { margin-top: 0; margin-bottom: 0; }
         }
         
-        /* Transisi Halaman yang Lebih Stabil */
+        /* Transisi Halaman Halus */
         #menu-container, #quiz-container, #score-container {
-            transition: opacity 300ms ease-out, transform 300ms ease-out;
-            width: 100%; /* Pastikan lebar penuh agar tidak layout shift */
-        }
-
-        /* Helper Class untuk Transisi */
-        .screen-hidden {
-            display: none !important;
+            transition: opacity 350ms ease-in-out, transform 350ms ease-in-out;
+            width: 100%;
         }
         
-        .screen-visible {
-            display: block !important;
-            opacity: 1;
-            transform: scale(1) translateY(0);
+        /* Helper Class untuk Logika Tampilan */
+        .screen-hidden { 
+            display: none !important; 
         }
-
+        .screen-visible { 
+            display: block !important; 
+            opacity: 1; 
+            transform: scale(1) translateY(0); 
+        }
+        
+        /* Animasi Masuk/Keluar */
         .fade-out-up {
-            opacity: 0;
-            transform: scale(0.98) translateY(-20px);
-            pointer-events: none;
+            opacity: 0; transform: scale(0.98) translateY(-20px); pointer-events: none;
         }
-
         .fade-in-up-start {
-            opacity: 0;
-            transform: scale(0.98) translateY(20px);
+            opacity: 0; transform: scale(0.98) translateY(20px);
         }
         
-        /* Animasi Reveal */
+        /* Animasi Muncul Bertahap (Staggered) */
         @keyframes reveal {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .reveal-item {
-            opacity: 0;
-            animation: reveal 400ms ease-out forwards;
-        }
+        .reveal-item { opacity: 0; animation: reveal 400ms ease-out forwards; }
 
-        /* Dark Mode */
+        /* Dark Mode Colors */
         body.dark { color: #f3f4f6; }
         body.dark #bg-canvas { background-color: #396991; }
         body.dark .main-container, body.dark .modal-container {
-            background-color: rgba(31, 41, 55, 0.6);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            background-color: rgba(31, 41, 55, 0.5); /* Transparan Gelap */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        body.dark h1, body.dark h2, body.dark h3, body.dark h4, body.dark p, body.dark strong, body.dark #question-text, body.dark #modal-nav-title { color: #f3f4f6; }
+        body.dark .text-slate-700, body.dark .text-slate-900 { color: #e5e7eb !important; }
         
-        body.dark h1, body.dark h2, body.dark h3, body.dark h4, body.dark p, body.dark strong, body.dark #question-text, body.dark #modal-nav-title {
-            color: #f3f4f6;
-        }
-        body.dark .text-slate-700, body.dark .text-slate-900 {
-            color: #e5e7eb !important; /* Pastikan teks terlihat di dark mode */
-        }
-        
-        /* Button Styles */
+        /* Tombol Interaktif (Efek Tekan & Bayangan) */
         .interactive-btn {
-            transition: transform 0.1s, box-shadow 0.2s; /* Dipercepat */
-            border: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow lebih ringan utk performa */
-            will-change: transform; /* Hint ke browser untuk optimasi */
+            transition: all 0.2s ease-out; border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .interactive-btn:hover {
+            transform: translateY(-2px); filter: brightness(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
         }
         .interactive-btn:active {
-            transform: scale(0.98);
+            transform: scale(0.98) translateY(0px); filter: brightness(0.9); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        
-        /* Gradients */
+        body.dark .interactive-btn:hover { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); }
+
+        /* Warna Gradien Tombol */
         #start-btn, #finish-btn, #confirm-finish-btn { background-image: linear-gradient(to right, #34d399, #10b981); }
         #next-btn, #reset-btn { background-image: linear-gradient(to right, #0ea5e9, #3b82f6); }
         #review-btn { background-image: linear-gradient(to right, #d946ef, #a855f7); }
@@ -148,82 +117,84 @@
         #back-to-menu-score-btn { background-color: #e5e7eb; color: #374151; }
         body.dark #back-to-menu-score-btn { background-color: #374151; color: #f3f4f6; }
         
-        /* Option Buttons */
+        /* Tombol Pilihan Ganda (Efek Kaca) */
         .option-btn {
-            transition: background-color 0.2s, transform 0.1s;
-            background-color: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
+            transition: all 0.2s ease-out;
+            background-color: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
             border: 1px solid rgba(255, 255, 255, 0.4);
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 0.75rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .option-btn:hover {
+            transform: scale(1.02); background-color: rgba(255, 255, 255, 0.5); border-color: rgba(255, 255, 255, 0.6);
         }
         body.dark .option-btn {
-            background-color: rgba(55, 65, 81, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #f3f4f6;
+            background-color: rgba(55, 65, 81, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1); color: #f3f4f6;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        body.dark .option-btn:hover {
+            transform: scale(1.02); background-color: rgba(55, 65, 81, 0.5); border-color: rgba(255, 255, 255, 0.2);
         }
         
-        /* State Jawaban */
         .selected-answer {
-            background-color: #dbeafe !important;
-            border-color: #2563eb !important;
-            color: #1e3a8a !important;
-            font-weight: 600;
-            transform: scale(1.01);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3); /* Ring effect instead of heavy shadow */
+            background-color: #dbeafe !important; border-color: #2563eb !important; color: #1e3a8a !important;
+            font-weight: 600; transform: scale(1.02); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
         }
         body.dark .selected-answer {
-            background-color: #1e3a8a !important;
-            border-color: #60a5fa !important;
-            color: #eff6ff !important;
+            background-color: #1e3a8a !important; border-color: #60a5fa !important; color: #eff6ff !important;
+            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.3);
         }
-        .correct-answer { background-color: #dcfce7 !important; border-color: #22c55e !important; color: #166534 !important; }
+        .correct-answer { background-color: #dcfce7 !important; border-color: #22c55e !important; color: #166534 !important; transform: scale(1.02); border-width: 2px; }
         body.dark .correct-answer { background-color: #064e3b !important; border-color: #34d399 !important; color: #d1fae5 !important; }
-        .wrong-answer { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
+        .wrong-answer { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; transform: scale(1.02); border-width: 2px; }
         body.dark .wrong-answer { background-color: #7f1d1d !important; border-color: #f87171 !important; color: #fee2e2 !important; }
 
-        /* Subject Buttons */
+        /* Tombol Mata Pelajaran (Efek Kaca) */
         .subject-active { background-image: linear-gradient(to right, #0ea5e9, #3b82f6); color: white; font-weight: 500; }
         .subject-inactive {
-            background-color: rgba(229, 231, 235, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            color: #374151;
-            font-weight: 500;
+            background-color: rgba(229, 231, 235, 0.3); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+            border: 1px solid rgba(255, 255, 255, 0.4); color: #374151; font-weight: 500;
         }
         body.dark .subject-inactive {
-            background-color: rgba(55, 65, 81, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #f3f4f6;
+             background-color: rgba(55, 65, 81, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: #f3f4f6;
         }
+        .subject-inactive:hover { background-color: rgba(229, 231, 235, 0.5); }
+        body.dark .subject-inactive:hover { background-color: rgba(55, 65, 81, 0.5); }
 
-        /* Navigation Grid */
+        /* Tombol Navigasi Soal */
         .q-nav-btn {
-            display: flex; align-items: center; justify-content: center;
-            width: 100%; aspect-ratio: 1/1; height: auto;
-            border-radius: 0.375rem; font-weight: 700;
-            transition: transform 0.1s;
+            display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 1/1;
+            border-radius: 0.375rem; font-weight: 700; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
-        .q-nav-btn:active { transform: scale(0.9); }
+        .q-nav-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         
-        .q-nav-unanswered { background-color: rgba(226, 232, 240, 0.4); border: 1px solid rgba(255, 255, 255, 0.4); color: #334155; }
-        body.dark .q-nav-unanswered { background-color: rgba(55, 65, 81, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); color: #f3f4f6; }
+        .q-nav-unanswered {
+            background-color: rgba(226, 232, 240, 0.3); backdrop-filter: blur(3px);
+            border: 1px solid rgba(255, 255, 255, 0.4); color: #334155;
+        }
+        body.dark .q-nav-unanswered {
+            background-color: rgba(55, 65, 81, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: #f3f4f6;
+        }
+        .q-nav-unanswered:hover { background-color: rgba(203, 213, 225, 0.5); transform: translateY(-2px); }
+        body.dark .q-nav-unanswered:hover { background-color: rgba(55, 65, 81, 0.5); transform: translateY(-2px); }
         
         .q-nav-answered-quiz { background-color: #60a5fa; color: white; }
+        .q-nav-answered-quiz:hover { background-color: #3b82f6; transform: translateY(-2px); }
         body.dark .q-nav-answered-quiz { background-color: #2563eb; }
         
         .q-nav-answered { background-color: #22c55e; color: white; }
         .q-nav-wrong-answered { background-color: #ef4444; color: white; }
         .q-nav-active { background-color: #f59e0b; color: #1f2937; outline: 2px solid #f59e0b; outline-offset: 2px; }
+        .q-nav-active:hover { transform: translateY(0px); }
 
-        /* Panels & Scrollbars */
+        /* Panel Daftar Soal & Scrollbars */
         #quiz-nav-panel, #desktop-nav-panel {
             display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.5rem; padding: 0.75rem;
-            border-radius: 0.5rem; max-height: 16rem; overflow-y: auto;
-            scroll-behavior: smooth; /* Smooth scroll */
+            border-radius: 0.5rem; max-height: 16rem; overflow-y: auto; scroll-behavior: smooth;
         }
         
-        /* Custom Scrollbar (Optimized) */
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 4px; }
@@ -231,62 +202,52 @@
         
         body.dark ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
         body.dark ::-webkit-scrollbar-thumb { background: rgba(75, 85, 99, 0.8); }
+        
+        /* Scrollbar Wacana Dark Mode */
+        body.dark #passage-container { scrollbar-color: #4b5563 #374151; scrollbar-width: auto; }
+        body.dark #passage-container::-webkit-scrollbar { width: 16px; }
+        body.dark #passage-container::-webkit-scrollbar-track { background: #374151; border-radius: 10px; }
+        body.dark #passage-container::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 10px; border: 4px solid #374151; }
 
-        body.dark #passage-container {
-            scrollbar-color: #4b5563 #374151;
-            scrollbar-width: auto; 
-        }
-
-        /* Floating Controls */
+        /* Floating Buttons */
         .floating-icon-btn {
-            background-color: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            padding: 10px; border-radius: 9999px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.1s;
-            cursor: pointer; width: 42px; height: 42px; position: relative;
+            background-color: rgba(255, 255, 255, 0.5); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+            padding: 10px; border-radius: 9999px; border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 300ms ease;
+            cursor: pointer; position: relative; width: 42px; height: 42px;
         }
-        .floating-icon-btn:active { transform: scale(0.9); }
-        body.dark .floating-icon-btn { background-color: rgba(31, 41, 55, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); color: #f3f4f6; }
+        .floating-icon-btn:hover { transform: scale(1.1); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); }
+        .floating-icon-btn:active { transform: scale(0.95); }
+        body.dark .floating-icon-btn { background-color: rgba(55, 65, 81, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); color: #f3f4f6; }
         .floating-icon-btn > svg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: opacity 0.3s, transform 0.3s; }
 
-        /* Modal */
+        /* Modal Popups (Glass) */
         .modal-backdrop {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 40;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.3s;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            z-index: 40; opacity: 0; transition: opacity 300ms ease-in-out; pointer-events: none;
         }
         .modal-container {
-            position: fixed; top: 50%; left: 50%;
-            width: 90%; max-width: 32rem;
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            border-radius: 1.5rem;
-            z-index: 50;
-            opacity: 0; pointer-events: none;
-            transform: translate(-50%, -40%) scale(0.95);
-            transition: opacity 0.3s, transform 0.3s;
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 50; width: 90%; max-width: 32rem;
+            background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 1.5rem;
+            opacity: 0; transition: opacity 300ms ease-in-out, transform 300ms ease-in-out; pointer-events: none;
         }
         body.dark .modal-container { background-color: rgba(31, 41, 55, 0.8); }
 
         .modal-active .modal-backdrop { opacity: 1; pointer-events: auto; }
         .modal-active .modal-container { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
+
+        #loading-spinner svg { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="p-4 min-h-screen flex items-center justify-center">
     
     <canvas id="bg-canvas"></canvas>
 
-    <!-- Audio -->
     <audio id="bg-music" src="./assets/musikku.mp3" loop muted></audio>
 
-    <!-- Floating Controls -->
     <div id="floating-controls" style="position: fixed; top: 20px; right: 20px; z-index: 100; display: flex; gap: 10px;">
         <button id="theme-toggle-btn-floating" class="floating-icon-btn">
             <svg id="theme-sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
@@ -298,9 +259,7 @@
         </button>
     </div>
 
-    <!-- Main Container -->
     <div class="main-container p-4 sm:p-6">
-
         <!-- MENU -->
         <div id="menu-container" class="screen-visible">
             <h1 class="text-3xl font-bold text-center text-slate-900 mb-6 dark:text-white">Kuis Kelas X Semester 1</h1>
@@ -312,6 +271,10 @@
             </div>
             
             <div id="subject-button-container" class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 hidden"></div>
+            
+            <button id="start-btn" class="interactive-btn w-full bg-green-600 text-white px-6 py-4 rounded-lg font-bold text-lg hover:bg-green-700 transition-all hidden">
+                Mulai Kuis
+            </button>
         </div>
         
         <!-- KUIS -->
@@ -449,14 +412,14 @@
         const quizContainer = document.getElementById('quiz-container');
         const scoreContainer = document.getElementById('score-container');
         const subjectButtonContainer = document.getElementById('subject-button-container'); 
-        const questionArea = document.getElementById('question-area');
+        const startBtn = document.getElementById('start-btn');
+        const quizTitle = document.getElementById('quiz-title');
+        const questionCounter = document.getElementById('question-counter');
+        const questionText = document.getElementById('question-text');
         const optionsContainer = document.getElementById('options-container');
         const loadingSpinner = document.getElementById('loading-spinner');
         const questionLoadingSpinner = document.getElementById('question-loading-spinner');
         const timerDisplay = document.getElementById('timer-display');
-        const quizTitle = document.getElementById('quiz-title');
-        const questionCounter = document.getElementById('question-counter');
-        const questionText = document.getElementById('question-text');
         const passageContainer = document.getElementById('passage-container');
         const passageTitleEl = document.getElementById('passage-title');
         const passageContentEl = document.getElementById('passage-content');
@@ -476,7 +439,7 @@
         const unmutedIcon = document.getElementById('music-icon-unmuted');
         const mutedIcon = document.getElementById('music-icon-muted');
 
-        // Tone.js Synths (Created once)
+        // Tone.js Synths
         const popSfxHigh = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.1 } }).toDestination();
         const popSfxMid = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.1 } }).toDestination();
         const popSfxLow = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.1 } }).toDestination();
@@ -519,7 +482,6 @@
         class Particle {
             constructor() { 
                 this.reset(); 
-                // Random start pos to avoid "pop in" effect
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
             }
@@ -555,7 +517,7 @@
         
         function initParticles() {
             particles = [];
-            for(let i=0; i<30; i++) particles.push(new Particle()); // Reduced count for performance
+            for(let i=0; i<30; i++) particles.push(new Particle()); 
         }
         
         function animateCanvas() {
@@ -576,8 +538,7 @@
                 toEl.classList.remove('screen-hidden');
                 toEl.classList.add('fade-in-up-start');
                 
-                // Force reflow
-                void toEl.offsetWidth;
+                void toEl.offsetWidth; // Force reflow
                 
                 toEl.classList.remove('fade-in-up-start');
                 toEl.classList.add('screen-visible');
@@ -597,10 +558,10 @@
         
         function clearQuizState() { localStorage.removeItem(QUIZ_STATE_KEY); }
 
-        // Quiz Logic
+        // FIX: startQuiz logic to prevent blocking
         async function startQuiz(subjectId, savedState = null) {
             isReviewMode = false;
-            // Don't await audio init here to avoid blocking UI
+            // FIX: DO NOT await initAudio here, just call it. Browsers block audio context start until interaction.
             initAudio(); 
             
             if (!savedState) switchScreen(menuContainer, quizContainer);
@@ -652,6 +613,7 @@
                     questionLoadingSpinner.classList.remove('hidden');
                 }
 
+                // FIX: Ensure this runs after loading
                 renderQuestion().then(() => {
                     if (!savedState) {
                         questionLoadingSpinner.classList.add('hidden');
@@ -687,7 +649,6 @@
                 const letter = String.fromCharCode(65 + idx);
                 btn.innerHTML = `${letter}. ${opt}`;
                 btn.className = 'option-btn border p-3 text-left w-full focus:outline-none focus:ring-2 focus:ring-blue-500';
-                // Staggered animation
                 btn.classList.add('reveal-item');
                 btn.style.animationDelay = `${idx * 50}ms`;
 
@@ -717,10 +678,8 @@
         function handleAnswer(idx) {
             popSfxMid.triggerAttackRelease('G5', '16n', Tone.now());
             userAnswers[currentQuestionIndex] = idx;
-            
             Array.from(optionsContainer.children).forEach(b => b.classList.remove('selected-answer'));
             optionsContainer.children[idx].classList.add('selected-answer');
-            
             updateNavState();
             saveQuizState();
         }
@@ -728,17 +687,14 @@
         function showFeedback(selectedIdx) {
             const correctIdx = activeQuizData[currentQuestionIndex].correctAnswer;
             const btns = optionsContainer.children;
-            
             for(let i=0; i<btns.length; i++) {
                 btns[i].disabled = true;
                 if (i === correctIdx) btns[i].classList.add('correct-answer');
                 else if (i === selectedIdx) btns[i].classList.add('wrong-answer');
             }
-
             explanationText.innerHTML = `<strong>Penjelasan:</strong> ${activeQuizData[currentQuestionIndex].explanation}`;
             explanationBox.className = `mt-4 p-4 rounded-lg border ${selectedIdx === correctIdx ? 'explanation-correct' : 'explanation-wrong'}`;
             explanationBox.classList.remove('hidden');
-            
             if (window.MathJax) MathJax.typesetPromise([explanationBox]);
         }
 
@@ -747,7 +703,6 @@
             const m = Math.floor(remainingTime / 60);
             const s = remainingTime % 60;
             timerDisplay.textContent = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
-            
             if (remainingTime % 5 === 0) saveQuizState();
             if (remainingTime <= 0) {
                 clearInterval(timerInterval);
@@ -760,18 +715,14 @@
             const mobPanel = document.getElementById('quiz-nav-panel');
             const deskPanel = document.getElementById('desktop-nav-panel');
             mobPanel.innerHTML = ''; deskPanel.innerHTML = '';
-
             activeQuizData.forEach((_, i) => {
                 const btn = document.createElement('button');
                 btn.textContent = i + 1;
                 btn.className = 'q-nav-btn q-nav-unanswered';
                 btn.dataset.index = i;
-                
                 const btnDesk = btn.cloneNode(true);
-                
                 btn.onclick = () => jumpToQuestion(i, true);
                 btnDesk.onclick = () => jumpToQuestion(i, false);
-                
                 mobPanel.appendChild(btn);
                 deskPanel.appendChild(btnDesk);
             });
@@ -782,7 +733,6 @@
             btns.forEach(b => {
                 const i = parseInt(b.dataset.index);
                 b.className = 'q-nav-btn';
-                
                 if (i === currentQuestionIndex) b.classList.add('q-nav-active');
                 else if (userAnswers[i] !== null) {
                     if (isReviewMode) {
@@ -817,15 +767,13 @@
             if (isReviewMode) {
                 finish.classList.add('hidden');
                 reviewBack.classList.remove('hidden');
-                backMenu.classList.add('hidden'); // Hide in review mode
-                
+                backMenu.classList.add('hidden'); 
                 if (currentQuestionIndex === activeQuizData.length - 1) next.classList.add('hidden');
                 else { next.classList.remove('hidden'); next.textContent = 'Berikutnya'; }
             } else {
                 finish.classList.remove('hidden');
                 reviewBack.classList.add('hidden');
                 backMenu.classList.remove('hidden');
-                
                 if (currentQuestionIndex === activeQuizData.length - 1) next.classList.add('hidden');
                 else { next.classList.remove('hidden'); next.textContent = 'Berikutnya'; }
             }
@@ -852,9 +800,16 @@
             clearQuizState();
             setMusicVolume(HIGH_VOLUME);
             if (timerInterval) clearInterval(timerInterval);
-            
             const current = !quizContainer.classList.contains('screen-hidden') ? quizContainer : scoreContainer;
             switchScreen(current, menuContainer);
+            
+            // FIX: Ensure menu is ready (reset buttons visibility)
+            setTimeout(() => {
+                loadingSpinner.classList.add('hidden');
+                subjectButtonContainer.classList.remove('hidden');
+                startBtn.classList.remove('hidden');
+                resetSubjectButtonAnimations();
+            }, 350);
         }
 
         function toggleModal(wrapper, show) {
@@ -862,24 +817,33 @@
             else wrapper.classList.remove('modal-active');
         }
 
-        // Event Listeners
-        document.getElementById('prev-btn').onclick = () => {
-             if (currentQuestionIndex > 0) { currentQuestionIndex--; saveQuizState(); renderQuestion(); }
-        };
-        document.getElementById('next-btn').onclick = () => {
-             if (currentQuestionIndex < activeQuizData.length - 1) { currentQuestionIndex++; saveQuizState(); renderQuestion(); }
-        };
-        
+        // Reset Button Animations Helper
+        function resetSubjectButtonAnimations() {
+            const items = subjectButtonContainer.querySelectorAll('.reveal-item');
+            items.forEach((item, index) => {
+                item.style.opacity = 0;
+                item.classList.remove('reveal-item');
+                void item.offsetWidth;
+                item.classList.add('reveal-item');
+                item.style.animationDelay = `${index * 50}ms`;
+            });
+            startBtn.style.opacity = 0;
+            startBtn.classList.remove('reveal-item');
+            void startBtn.offsetWidth;
+            startBtn.classList.add('reveal-item');
+            startBtn.style.animationDelay = `${items.length * 50}ms`;
+        }
+
+        document.getElementById('prev-btn').onclick = () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; saveQuizState(); renderQuestion(); } };
+        document.getElementById('next-btn').onclick = () => { if (currentQuestionIndex < activeQuizData.length - 1) { currentQuestionIndex++; saveQuizState(); renderQuestion(); } };
         document.getElementById('open-nav-btn').onclick = () => toggleModal(navWrapper, true);
         document.getElementById('close-nav-btn').onclick = () => toggleModal(navWrapper, false);
         document.getElementById('modal-backdrop-nav').onclick = () => toggleModal(navWrapper, false);
-
         document.getElementById('finish-btn').onclick = () => toggleModal(finishWrapper, true);
         document.getElementById('cancel-finish-btn').onclick = () => toggleModal(finishWrapper, false);
         document.getElementById('confirm-finish-btn').onclick = finishQuiz;
         
         document.getElementById('reset-btn').onclick = () => {
-            // Restart logic
             clearQuizState();
             switchScreen(scoreContainer, quizContainer);
             currentQuestionIndex = 0; score = 0;
@@ -914,14 +878,12 @@
         musicBtn.onclick = async () => {
             await initAudio();
             updateMusicState(!isUserMuted);
-            // Set volume based on current screen
             if (!isUserMuted) {
                 const inQuiz = !quizContainer.classList.contains('screen-hidden');
                 setMusicVolume(inQuiz ? LOW_VOLUME : HIGH_VOLUME);
             }
         };
 
-        // Initialize
         window.addEventListener('load', async () => {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') themeBtn.click();
@@ -931,7 +893,6 @@
             animateCanvas();
             window.addEventListener('resize', resizeCanvas);
 
-            // Visibility API (Hemat Baterai)
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden) {
                     if (animationFrameId) cancelAnimationFrame(animationFrameId);
@@ -942,13 +903,11 @@
                 }
             });
 
-            // Load Subjects & Check State
             try {
                 const ts = new Date().getTime();
                 const res = await fetch(`./data/subjects.json?v=${ts}`);
                 allSubjects = await res.json();
                 
-                // Render Buttons
                 const container = document.getElementById('subject-button-container');
                 container.innerHTML = '';
                 allSubjects.forEach((sub, i) => {
@@ -957,7 +916,6 @@
                     btn.className = 'subject-btn interactive-btn subject-inactive w-full p-4 rounded-lg text-lg reveal-item';
                     btn.style.animationDelay = `${i * 50}ms`;
                     btn.onclick = () => {
-                         // visual selection
                          document.querySelectorAll('.subject-btn').forEach(b => {
                              b.classList.remove('subject-active'); b.classList.add('subject-inactive');
                          });
@@ -972,20 +930,16 @@
                     container.appendChild(btn);
                 });
                 
-                // Restore State?
                 const savedState = localStorage.getItem(QUIZ_STATE_KEY);
                 if (savedState) {
                     const parsed = JSON.parse(savedState);
-                    // Validasi data saved state
                     if(parsed && parsed.subjectId && parsed.answers) {
-                         // Skip menu, go to quiz
                          menuContainer.classList.remove('screen-visible');
                          menuContainer.classList.add('screen-hidden');
                          quizContainer.classList.remove('screen-hidden');
                          quizContainer.classList.add('screen-visible');
                          startQuiz(parsed.subjectId, parsed);
                     } else {
-                         // Corrupt state, clear it
                          clearQuizState();
                          finishMenuLoad();
                     }
@@ -1001,7 +955,6 @@
             document.getElementById('subject-button-container').classList.remove('hidden');
         }
 
-        // Fix Audio Context on Interaction
         document.body.addEventListener('click', initAudio, { once: true });
     </script>
 </body>
