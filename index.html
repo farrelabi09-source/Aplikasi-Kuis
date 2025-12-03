@@ -142,6 +142,16 @@
             animation: reveal 400ms ease-out forwards;
         }
         
+        /* Helper Class untuk Logika Tampilan - PENTING! */
+        .screen-hidden { 
+            display: none !important; 
+        }
+        /* Kelas ini memaksa elemen muncul, mengalahkan 'hidden' tailwind */
+        .screen-visible { 
+            display: block !important; 
+            opacity: 1; 
+            transform: scale(1) translateY(0); 
+        }
 
         /* --- STYLING DARK MODE FIXES (Perbaikan Tambahan) --- */
         body.dark {
@@ -819,7 +829,7 @@
         }
     </style>
 </head>
-<body class="p-4">
+<body class="p-4 min-h-screen flex items-center justify-center">
     
     <canvas id="bg-canvas"></canvas>
 
@@ -855,15 +865,15 @@
     <div class="main-container p-4 sm:p-6 rounded-2xl shadow-2xl">
 
         <!-- 1. Kontainer Menu (Mulai visible) -->
-        <div id="menu-container" class="opacity-100">
-            <h1 class="text-3xl font-bold text-center text-slate-800 mb-6">Kuis Kelas X Semester 1</h1>
+        <div id="menu-container" class="screen-visible">
+            <h1 class="text-3xl font-bold text-center text-slate-900 mb-6 dark:text-white">Kuis Kelas X Semester 1</h1>
             
-            <h2 class="text-lg font-semibold text-slate-700 mb-3">Pilih Mata Pelajaran:</h2>
+            <h2 class="text-lg font-semibold text-slate-700 mb-3 dark:text-gray-200">Pilih Mata Pelajaran:</h2>
             
             <!-- Spinner Pemuatan -->
             <div id="loading-spinner" class="flex flex-col items-center justify-center my-6">
                 <svg class="w-8 h-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                <p class="mt-2 text-sm text-slate-600">Memuat daftar pelajaran...</p>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Memuat daftar pelajaran...</p>
             </div>
             
             <!-- Tombol subjek dinamis -->
@@ -878,17 +888,17 @@
         </div>
         
         <!-- 2. Kontainer Kuis (Mulai invisible dan hidden) -->
-        <div id="quiz-container" class="opacity-0 hidden">
+        <div id="quiz-container" class="screen-hidden">
             <!-- Header (Judul & Kembali) -->
             <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
-                <h1 id="quiz-title" class="text-xl font-bold text-slate-800">Kuis</h1>
+                <h1 id="quiz-title" class="text-xl font-bold text-slate-900 dark:text-white">Kuis</h1>
                 <div class="flex items-center gap-3">
                     <div id="timer-display" class="text-lg font-semibold text-red-600 bg-red-100 px-3 py-1 rounded-md">80:00</div>
                     <!-- PERUBAHAN: Tombol Daftar Soal hilang di desktop (lg:hidden) -->
-                    <button id="open-nav-btn" class="text-sm text-white bg-blue-600 px-3 py-1 rounded-md hover:bg-blue-700 font-medium transition-all lg:hidden">
+                    <button id="open-nav-btn" class="text-sm text-white bg-blue-600 px-3 py-1 rounded-md hover:bg-blue-700 font-medium transition-all lg:hidden interactive-btn">
                         Daftar Soal
                     </button>
-                    <button id="back-to-menu-quiz-btn" class="text-sm text-blue-600 hover:underline">
+                    <button id="back-to-menu-quiz-btn" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
                         Kembali ke Menu
                     </button>
                 </div>
@@ -901,9 +911,9 @@
                 <div id="quiz-content" class="w-full lg:w-7/12">
                     
                     <!-- WACANA / TEKS SOAL -->
-                    <div id="passage-container" class="mb-5 p-4 bg-gray-50 border rounded-lg max-h-48 overflow-y-auto hidden">
-                        <h4 id="passage-title" class="font-bold text-sm text-gray-700 mb-2"></h4>
-                        <div id="passage-content" class="text-sm text-gray-800 leading-relaxed"></div>
+                    <div id="passage-container" class="mb-5 p-4 border rounded-lg max-h-48 overflow-y-auto hidden bg-white/40 dark:bg-slate-800/40">
+                        <h4 id="passage-title" class="font-bold text-sm text-gray-900 mb-2 dark:text-gray-100"></h4>
+                        <div id="passage-content" class="text-sm text-gray-900 leading-relaxed dark:text-gray-200"></div>
                     </div>
 
                     <!-- Spinner saat soal dimuat -->
@@ -913,9 +923,9 @@
                     </div>
 
                     <div id="question-area" class="opacity-0"> <!-- Mulai transisi fade di sini -->
-                        <div id="question-counter" class="text-sm font-medium text-slate-600 bg-slate-200 px-3 py-1 rounded-full w-fit mb-4"></div>
+                        <div id="question-counter" class="text-sm font-medium text-slate-600 bg-slate-200 px-3 py-1 rounded-full w-fit mb-4 dark:bg-slate-700 dark:text-slate-300"></div>
                         <div class="mb-5">
-                            <p id="question-text" class="text-lg font-semibold text-slate-900 leading-relaxed"></p>
+                            <p id="question-text" class="text-lg font-semibold text-slate-900 leading-relaxed dark:text-white"></p>
                         </div>
                         <div id="options-container" class="flex flex-col gap-3"></div>
                     </div>
@@ -963,7 +973,7 @@
         </div>
 
         <!-- 3. Kontainer Skor (Mulai invisible dan hidden) -->
-        <div id="score-container" class="opacity-0 hidden text-center">
+        <div id="score-container" class="screen-hidden text-center">
             <h2 class="text-2xl font-bold text-slate-800 mb-4">Kuis Selesai!</h2>
             <p class="text-xl text-slate-700 mb-2">Skor Anda:</p>
             <p id="score-text" class="text-5xl font-bold text-blue-600 mb-6"></p>
@@ -1286,16 +1296,18 @@
 
             setTimeout(() => {
                 outgoing.classList.add('hidden');
-                outgoing.classList.remove('slide-out-up'); // Reset
+                outgoing.classList.add('screen-hidden'); // Helper
+                outgoing.classList.remove('slide-out-up', 'screen-visible'); // Reset
                 
                 // Siapkan layar baru (posisi awal)
                 incoming.classList.add('opacity-0'); 
                 incoming.style.transform = 'translateY(20px) scale(0.98)';
-                incoming.classList.remove('hidden'); 
+                incoming.classList.remove('hidden', 'screen-hidden'); // Helper
                 
                 // Tunda sedikit, lalu animasikan masuk
                 setTimeout(() => {
                     incoming.classList.remove('opacity-0');
+                    incoming.classList.add('screen-visible');
                     incoming.style.transform = 'translateY(0px) scale(1)';
                 }, 20); // Penundaan singkat untuk memicu transisi CSS
 
@@ -1307,8 +1319,11 @@
         // ==========================================================
         async function startQuiz(subjectId, savedState = null) {
             isReviewMode = false; 
-            await initAudio(); // Inisialisasi Tone.js/SFX
-            popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now());
+            // ==========================================================
+            // *** FIX BUG REFRESH: HAPUS AWAIT INIT AUDIO ***
+            // ==========================================================
+            initAudio(); 
+            // popSfxHigh.triggerAttackRelease('C6', '16n', Tone.now()); // Pindahkan sound effect ke interaksi
             
             // Hanya lakukan transisi layar jika INI KUIS BARU (bukan restore)
             if (!savedState) {
@@ -1321,13 +1336,8 @@
                 if (quizzesCache.has(subjectId)) {
                     flatQuestions = quizzesCache.get(subjectId);
                 } else {
-                    // ==========================================================
-                    // *** PERBAIKAN "CACHE BUSTER" ***
-                    // Ini akan memaksa browser/server mengambil file versi baru
-                    const timestamp = new Date().getTime(); // Dapatkan angka unik (waktu saat ini)
+                    const timestamp = new Date().getTime(); 
                     const response = await fetch(`./data/${subjectId}.json?v=${timestamp}`);
-                    // *** AKHIR PERBAIKAN ***
-                    // ==========================================================
                     
                     if (!response.ok) throw new Error(`File data/${subjectId}.json tidak ditemukan.`);
                     const fetchedData = await response.json();
@@ -1380,7 +1390,7 @@
                     questionLoadingSpinner.classList.remove('hidden'); 
                 }
 
-                // PERBAIKAN BUG FADE-IN: Tunggu loadQuestion (termasuk MathJax) selesai
+                // Tunggu loadQuestion (termasuk MathJax) selesai
                 loadQuestion().then(() => {
                     if (!savedState) {
                         questionLoadingSpinner.classList.add('hidden'); 
@@ -1396,7 +1406,6 @@
 
             } catch (error) {
                 console.error("Gagal memuat kuis:", error);
-                // *** PERBAIKAN ERROR MESSAGE: Lebih spesifik dan kasih tahu letak file ***
                 let errorMessage = `Gagal memuat data kuis. Cek file JSON: ${subjectId}.json`;
                 if (error.message.includes('404')) {
                      errorMessage += `\n\nError 404 (File Not Found). Pastikan file "${subjectId}.json" ada di dalam folder "/data/" di GitHub Anda.`;
@@ -1433,7 +1442,12 @@
             clearQuizState();
             // ==========================================================
 
-            const activeContainer = !quizContainer.classList.contains('hidden') ? quizContainer : scoreContainer;
+            // *** FIX BUG MENU LOADING: Pastikan elemen menu visible ***
+            loadingSpinner.classList.add('hidden'); 
+            subjectButtonContainer.classList.remove('hidden'); 
+            startBtn.classList.remove('hidden');
+
+            const activeContainer = !quizContainer.classList.contains('hidden') && !quizContainer.classList.contains('screen-hidden') ? quizContainer : scoreContainer;
             
             transitionScreen(activeContainer, menuContainer); // <-- BARU: Transisi
             
@@ -1857,8 +1871,10 @@
                     selectedSubjectId = savedState.subjectId;
                     
                     // Sembunyikan menu, siapkan kuis
-                    menuContainer.classList.add('hidden', 'opacity-0');
-                    quizContainer.classList.remove('hidden', 'opacity-0'); 
+                    menuContainer.classList.add('hidden', 'opacity-0', 'screen-hidden');
+                    menuContainer.classList.remove('screen-visible');
+                    quizContainer.classList.remove('hidden', 'opacity-0', 'screen-hidden'); 
+                    quizContainer.classList.add('screen-visible');
                     quizContainer.style.transform = 'translateY(0px) scale(1)';
                     
                     // Panggil startQuiz dengan state
@@ -1952,9 +1968,9 @@
         // --- TITIK MULAI APLIKASI ---
         window.addEventListener('load', () => {
             // BARU: Atur state awal untuk transisi
-            quizContainer.classList.add('hidden', 'opacity-0');
+            quizContainer.classList.add('hidden', 'opacity-0', 'screen-hidden');
             quizContainer.style.transform = 'translateY(20px) scale(0.98)';
-            scoreContainer.classList.add('hidden', 'opacity-0');
+            scoreContainer.classList.add('hidden', 'opacity-0', 'screen-hidden');
             scoreContainer.style.transform = 'translateY(20px) scale(0.98)';
             
             loadTheme(); // Muat tema tersimpan
@@ -2081,10 +2097,10 @@
             updateMusicState(newMuteState);
             
             // Atur volume berdasarkan di mana dia berada (Hanya jika di-unmute)
-            if (!newMuteState && quizContainer.classList.contains('hidden')) {
-                 setMusicVolume(HIGH_VOLUME); // Menu/Skor
-            } else if (!newMuteState && !quizContainer.classList.contains('hidden')) {
+            if (!newMuteState && quizContainer.classList.contains('screen-visible')) {
                  setMusicVolume(LOW_VOLUME); // Kuis
+            } else if (!newMuteState) {
+                 setMusicVolume(HIGH_VOLUME); // Menu/Skor
             }
         });
 
@@ -2097,15 +2113,6 @@
             applyTheme(newTheme); // isAuto dihapus
         });
         
-        // BARU: Tombol Auto-Tema (DIHAPUS)
-        /*
-        themeAutoBtn.addEventListener('click', () => {
-             localStorage.removeItem('theme'); // Hapus override manual
-             loadTheme(); // Muat ulang tema (akan mendeteksi device)
-        });
-        */
-
-
         // Event Listener Modal Navigasi (tetap)
         openNavBtn.addEventListener('click', openNavModal);
         closeNavBtn.addEventListener('click', () => closeNavModal(true));
