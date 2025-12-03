@@ -42,8 +42,13 @@
     {
         "id": "Fisika",
         "title": "Kuis UAS Fisika"
+    },
+    {
+        "id": "Biologi",
+        "title": "Kuis UAS Biologi"
+    },
+    {
+        "id": "PJOK",
+        "title": "Kuis UAS PJOK"
     }
 ]
-
-
-
