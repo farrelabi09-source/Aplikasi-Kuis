@@ -1,6 +1,6 @@
 [
   {
-    "passageTitle": "BAGIAN 1: Keanekaragaman Hayati",
+    "passageTitle": "BAGIAN I: Keanekaragaman Hayati",
     "passageText": "Pemahaman mengenai tingkat keanekaragaman gen, spesies, ekosistem, serta upaya pelestariannya.",
     "questions": [
       {
@@ -54,7 +54,7 @@
     ]
   },
   {
-    "passageTitle": "BAGIAN 2: Klasifikasi Makhluk Hidup",
+    "passageTitle": "BAGIAN II: Klasifikasi Makhluk Hidup",
     "passageText": "Prinsip dasar klasifikasi, tata nama binomial nomenklatur, dan sistem taksonomi.",
     "questions": [
       {
@@ -132,7 +132,7 @@
     ]
   },
   {
-    "passageTitle": "BAGIAN 3: Virus",
+    "passageTitle": "BAGIAN III: Virus",
     "passageText": "Karakteristik virus, daur hidup (litik & lisogenik), serta peranannya dalam kehidupan.",
     "questions": [
       {
@@ -222,7 +222,7 @@
     ]
   },
   {
-    "passageTitle": "BAGIAN 4: Monera (Bakteri)",
+    "passageTitle": "BAGIAN IV: Monera (Bakteri)",
     "passageText": "Struktur sel prokariotik, cara hidup bakteri, reproduksi, dan peranannya.",
     "questions": [
       {
@@ -312,7 +312,7 @@
     ]
   },
   {
-    "passageTitle": "BAGIAN 5: Fungi (Jamur)",
+    "passageTitle": "BAGIAN V: Fungi (Jamur)",
     "passageText": "Ciri-ciri jamur, klasifikasi (Zygomycota, Ascomycota, Basidiomycota, Deuteromycota), dan simbiosis.",
     "questions": [
       {
@@ -414,7 +414,7 @@
     ]
   },
   {
-    "passageTitle": "BAGIAN 6: Plantae (Tumbuhan)",
+    "passageTitle": "BAGIAN VI: Plantae (Tumbuhan)",
     "passageText": "Dunia tumbuhan meliputi Bryophyta (lumut), Pteridophyta (paku), dan Spermatophyta (tumbuhan berbiji).",
     "questions": [
       {
@@ -480,7 +480,7 @@
     ]
   },
   {
-    "passageTitle": "BAGIAN 7: Mikroorganisme & Bioteknologi",
+    "passageTitle": "BAGIAN VII: Mikroorganisme & Bioteknologi",
     "passageText": "Pemanfaatan mikroorganisme dalam bioteknologi serta peranannya dalam lingkungan.",
     "questions": [
       {
@@ -521,4 +521,5 @@
       }
     ]
   }
+
 ]
