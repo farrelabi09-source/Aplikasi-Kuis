@@ -1,6 +1,6 @@
 [
   {
-    "passageTitle": "BAGIAN 1: Berpikir Komputasional",
+    "passageTitle": "BAGIAN I: Berpikir Komputasional",
     "passageText": "Konsep dasar Computational Thinking meliputi dekomposisi, abstraksi, pengenalan pola, dan algoritma dalam pemecahan masalah sehari-hari maupun teknis.",
     "questions": [
       {
@@ -186,7 +186,7 @@
     ]
   },
   {
-    "passageTitle": "BAGIAN 2: Hardware Komputer",
+    "passageTitle": "BAGIAN II: Hardware Komputer",
     "passageText": "Pemahaman mengenai komponen perangkat keras komputer, fungsi, kelebihan/kekurangan, serta troubleshooting dasar.",
     "questions": [
       {
