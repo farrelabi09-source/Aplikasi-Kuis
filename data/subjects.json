@@ -54,5 +54,9 @@
     {
         "id": "Informatika",
         "title": "Kuis UAS Informatika"
+    },
+    {
+        "id": "PAI",
+        "title": "Kuis UAS Pendidikan Agama Islam"
     }
 ]
